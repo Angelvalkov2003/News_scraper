@@ -1,0 +1,16 @@
+{
+  "description": "Регистър на уебсайтове и техните схеми за извличане. Всяко ID съответства на папка в ParsedHTMLs/ и Schemas/.",
+  "canonical_output_schema": "scraped_article_json_schema.json",
+  "sites": [
+    {
+      "id": "birgun.net",
+      "name": "BirGün Gazetesi",
+      "base_url": "https://www.birgun.net",
+      "parsed_html_dir": "ParsedHTMLs/birgun.net",
+      "schema_dir": "Schemas/birgun.net",
+      "article_schema": "Schemas/birgun.net/article_schema.json",
+      "extraction_spec": "Schemas/birgun.net/EXTRACTION_SPEC.md",
+      "site_info": "Schemas/birgun.net/site.json"
+    }
+  ]
+}
