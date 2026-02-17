@@ -1,0 +1,300 @@
+{
+  "metadata": {
+    "document_date": "2026-02-09T22:36:00+03:00",
+    "authors": [
+      {
+        "name": "Haber Merkezi",
+        "url": null
+      }
+    ],
+    "categories": [
+      {
+        "name": "Kültür Sanat",
+        "url": "/kategori/kultur-sanat-11"
+      }
+    ],
+    "tags": [
+      {
+        "name": "yaşar kemal",
+        "url": "/etiket/yasar-kemal-248"
+      },
+      {
+        "name": "edebiyat",
+        "url": "/etiket/edebiyat-102"
+      },
+      {
+        "name": "gazetecilik",
+        "url": "/etiket/gazetecilik-493"
+      },
+      {
+        "name": "insan",
+        "url": "/etiket/insan-5041"
+      },
+      {
+        "name": "doğa",
+        "url": "/etiket/doga-315"
+      }
+    ]
+  },
+  "components": {
+    "components": [
+      {
+        "type": "heading",
+        "properties": {
+          "text": "\"Yaşar Kemal ile Dünden Yarına: Yanan Ormanlardan Yarının Dünyasına\" etkinliklerinin ardından",
+          "level": 1
+        }
+      },
+      {
+        "type": "image",
+        "properties": {
+          "url": "https://static.birgun.net/resim/makale/2026/02/09/yasar-kemal-ile-dunden-yarina-yanan-ormanlardan-yarinin-dunyasina-etkinliklerinin-ardindan.jpg",
+          "description": "\"Yaşar Kemal ile Dünden Yarına: Yanan Ormanlardan Yarının Dünyasına\" etkinliklerinin ardından"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**Yasemin GİRİTLİ İNCEOĞLU***"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Geçtiğimiz hafta sonu, 7–8 Şubat tarihlerinde Adana ve Mersin'de düzenlenen [Yaşar Kemal](/etiket/yasar-kemal-248) Sanat Günleri kapsamında iki ayrı etkinliğe katıldım. Bu yıl ilk kez bir roman yerine, Yaşar Kemal'in [gazetecilik](/etiket/gazetecilik-493) döneminin en önemli metinlerinden biri olan Yanan Ormanlarda Elli Gün adlı röportaj dizisi merkeze alındı."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Adana'da, Adana Büyükşehir Belediyesi, Altın Koza ve Yaşar Kemal Vakfı iş birliğiyle gerçekleştirilen \"Yaşar Kemal ile Dünden Yarına: Yanan Ormanlardan Yarının Dünyasına\" başlıklı panelde, Doç. Dr. Cihan Erdönmez ile birlikte konuşmacı olarak yer aldım. Panelin moderatörlüğünü ise Prof. Dr. Mustafa Apaydın üstlendi."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Mersin'de ise Mersin [Edebiyat](/etiket/edebiyat-102) Gönülleri, Antik Sahaf Kitabevi ve Yaşar Kemal Vakfı'nın iş birliğiyle, çoğunluğunu öğretmenler ve gençlerin oluşturduğu bir katılımla, aynı başlık altında bu kez atölye çalışmasına kılavuzluk eden bir panel gerçekleştirildi. Etkinliğin moderatörlüğünü Mithat Delioğlu yaptı."
+        }
+      },
+      {
+        "type": "image",
+        "properties": {
+          "url": "https://static.birgun.net/resim/content/2026/02/09/yasar-kemal-ile-dunden-yarina-yanan-ormanlardan-yarinin-dunyasina-etkinliklerinin-ardindan.jpg"
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "YAŞAR KEMAL'İN RÖPORTAJ GAZETECİLİĞİ*",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bugün burada Yaşar Kemal'i yalnızca bir edebiyatçı olarak değil, aynı zamanda doğanın, toplumun ve vicdanın çağdaş tanığı olarak konuşmak üzere toplandık. Yaşar Kemal'in eserleri yalnızca bir anlatı değildir; düşünce ile deneyimi, tarih ile bugünü, ekoloji ile etiği birbirine bağlayan bir köprü işlevi görür."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bugün bu köprünün bir ayağında Yanan Ormanlarda Elli Gün, diğer ayağında ise bizim yaşadığımız güncel ekolojik krizler duruyor. Bu köprüyü birlikte geçmeye çalışacağız. Önce Yaşar Kemal'in gazetecilik anlayışı ve röportaj pratiği üzerinde duracak, ardından Yanan Ormanlarda Elli Güne geçeceğim."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "YAŞAR KEMAL'DE GAZETECİLİK VE EDEBİYAT",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Yaşar Kemal'in edebi yanı ile gazeteci yanı birbirinden ayrı değil; birbirini besleyen iki damardır. O, gazeteciliğe edebiyat eklemeye çalışan biri değildir. Gerçeği edebiyatın imkânlarıyla kavramaya çalışan bir gazetecidir. Edebiyat onun için süs değil, hakikate ulaşmanın asli yoludur."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Kendi sözleri bu duruşu çok açık biçimde ortaya koyar:"
+        }
+      },
+      {
+        "type": "citation",
+        "properties": {
+          "citation_text": "Röportaj bir edebiyat sayılabilir mi… Röportaj bal gibi edebiyattır. Onu haberden ayıran nitelik onun edebiyat gücüdür. Haber bir taşımadır; röportaj bir yaratmadır."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bu söz, onun gazeteciliği nasıl yeniden tanımladığını gösterir. Haber bilgi taşır; röportaj ise [insan](/etiket/insan-5041) hikâyesini, deneyimi ve duyguyu taşır. Yaşar Kemal'e göre gerçek, yüzeyde duran bir şey değildir; içine girilmesi, hissedilmesi ve kavranılması gerekir. Bu nedenle edebi duyarlılık onun gazeteciliğini zayıflatan değil; derinleştiren, genişleten ve anlamlandıran bir unsurdur."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "RÖPORTAJDA DERİNLEMESİNE TANIKLIK: SÜRE, SABIR, SES",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Yaşar Kemal gazeteciliğinin en dikkat çekici özelliklerinden biri sahadaki süredir. Modern gazetecilik çoğu zaman olayı anlık bir habere indirger. Oysa Yaşar Kemal sahayı terk etmez. İnsanları, mekânı ve olayları uzun süre gözlemler; dinler, bekler, tekrar sorar."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bu süreklilik, röportajı yalnızca bir kayıt olmaktan çıkarır; toplumsal, tarihsel ve mekânsal bir tanıklığa dönüştürür. Bu sabır, bir olayı anlatmaktan çok, onu anlamaya yönelik bir çabadır."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bir diğer önemli unsur çok sesliliktir. Yaşar Kemal'in metinlerinde tek bir bakış açısı yoktur. Farklı sesler yan yana gelir. Ancak bu, mekanik bir tarafsızlık kurmak için değil; olayın bütününü göstermek ve okura düşünme alanı açmak içindir."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "DİL, ETİK VE VİCDAN",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Yaşar Kemal'in röportaj dili sade görünür ancak güçlü bir ritim ve anlatım derinliği taşır. Bu dil yalnızca bilgi vermek için değil, okuru olayın içine almak için kurulmuştur. Onun gazeteciliğinde etik, geleneksel tarafsızlık anlayışına dayanmaz. Yaşar Kemal için etik, adaletsizlik karşısında sessiz kalmamaktır. Röportajlarında özellikle sesi bastırılanların, görünmez kılınanların deneyimlerine yer verir. Yanlış giden bir durumu görüp yazmamak, onun gözünde tarafsızlık değil körlüktür. Bu nedenle eleştiri, Yaşar Kemal gazeteciliğinin kaçınılmaz bir parçasıdır."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "DİL MESELESİ: HALKIN İÇİNDEN KONUŞMAK",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Yaşar Kemal'in dili \"halk hakkında\" yazan bir dil değil, halkın içinden konuşan bir dildir. Bu ayrım son derece önemlidir. Halk hakkında yazmak çoğu zaman mesafe koymayı gerektirir, halkın içinden konuşmak ise dinlemeyi ve o ritme uymayı."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Modern gazeteciliğin \"nötr dil\" anlayışı çoğu zaman gerçeği yoksullaştırır. Çünkü hayat, yangın nötr değildir. Kayıp, yoksulluk ve korku nötr yaşanmaz. Bunları nötr bir dille anlatmak, yaşananın hakikatine aykırıdır."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Yaşar Kemal bu nedenle halkın konuşma ritmini bozmaz. Cümleler bazen uzar, bazen tekrar eder. Bu anlatılan hayatın ritmidir. Anadolu'da insanlar dertlerini ölçüp biçerek anlatmaz, bu yüzden Yaşar Kemal de metinde bunu düzeltmeye kalkmaz."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bu tercih aynı zamanda etik ve politik bir tercihtir. Resmî dil çoğu zaman iktidarın dilidir. Halk dili ise düzenin yarattığı çatlakları görünür kılar. Yangının neden çıktığını, kimin zarar gördüğünü en açık biçimde bu dil anlatır."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "\"YANAN ORMANLARDA ELLİ GÜN\": NE ANLATIR?",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bu başlık yalnızca elli günlük bir zamanı ifade etmez. Aynı zamanda Yaşar Kemal'in sahadaki sabrının, tanıklık anlayışının ve gerçeğe ulaşma ısrarının simgesidir. Yangın yalnızca ağaçların yanması değil, geçim kaynaklarının, ekolojik sistem dengesinin ve kültürel hafızanın yok oluşudur. Yaşar Kemal ormanı romantik bir [doğa](/etiket/doga-315) imgesi olarak değil, yaşamın kendisi olarak ele alır."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Orman yandığında köylü yalnızca ağaçlarını değil, bilgi birikimini, ritüellerini ve geleceğini de kaybeder. Metin bu nedenle yangını yalnızca doğal bir felaket olarak değil, toplumsal bir kırılma olarak okur."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "İNSAN-DOĞA İLİŞKİSİ VE SORUMLULUK",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Yaşar Kemal modern düşüncenin insanı merkeze alan yaklaşımını eleştirir. Ona göre insan doğanın efendisi değil, parçasıdır. Doğa pasif değildir, yanıt verir; yangın da bu yanıtın en sert biçimlerinden biridir."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bu bakış açısı, günümüzde yaşanan pek çok yangının arka planını da açıklar: yanlış planlama, endüstriyel müdahaleler ve yerel bilginin yok sayılması."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "YANGINLARIN NEDENLERİ VE YAPISAL SORUNLAR",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Yaşar Kemal yangını bireysel hatalarla açıklamaz. Köylüyü suçlamaz. Yangını ekonomik koşulların, toprak sorunlarının ve hayatta kalma mücadelesinin bir sonucu olarak ele alır. Yangınları yalnızca bireysel ihmallerle açıklamak, sorunu yüzeyde bırakır. Ekonomi, politika ve doğa arasındaki ilişki görülmeden çözüm üretmek mümkün değildir."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "YEREL BİLGİ VE HAFIZA",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Metinde yerel bilgi merkezi bir yerde durur. Köylünün, ormancının, çobanın bilgisi görmezden gelinmez. Oysa modern yönetim anlayışı çoğu zaman bu bilgiyi dışlar."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Son yıllarda Türkiye'de ve dünyada yaşanan yangınlar, yerel bilginin yok sayılmasının felaketleri nasıl büyüttüğünü açıkça göstermektedir. Yanan Ormanlarda Elli Gün yalnızca geçmişin tanıklığı değil, bugüne ve geleceğe yöneltilmiş bir çağrıdır. Doğayı, toplumu ve gazeteciliği birbirinden ayırmadan düşünmemiz gerektiğini hatırlatır. Yaşar Kemal'in sesi bugün hâlâ canlıdır. Bizi sessizliğin ötesine çağırır. Doğayı yalnızca izlenecek bir manzara değil, yaşamın ayrılmaz bir parçası olarak görmeye davet eder."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bugün burada büyük ustayı saygı ve rahmetle anıyorum. Onun bakışını, dilini ve sorumluluk anlayışını geleceğe taşımanın hepimizin ortak görevi olduğunu bir kez daha hatırlatmak isterim."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Teşekkür ederim."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "*Prof.Dr / İletişim Akademisyeni"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**Panellerde yaptığım konuşmanın özeti"
+        }
+      }
+    ]
+  }
+}
