@@ -8,6 +8,13 @@
       "title": "ArticleMetadata",
       "description": "Metadata for article documents including publication info, authors, categories, and tags",
       "properties": {
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Article title / headline"
+        },
         "document_date": {
           "type": [
             "string",

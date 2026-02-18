@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "title": "Türkiye'nin Ekonomi Karnesi",
+    "document_date": "2020-07-03T15:02:41+03:00",
+    "authors": [
+      {
+        "name": "Resul Kunt",
+        "url": "https://www.dogrulukpayi.com/yazar/resul-kunt"
+      }
+    ],
+    "categories": [
+      {
+        "name": "Bülten",
+        "url": "https://www.dogrulukpayi.com/bultenler"
+      }
+    ],
+    "tags": null
+  },
+  "components": {
+    "components": [
+      {
+        "type": "heading",
+        "properties": {
+          "text": "Türkiye'nin Ekonomi Karnesi",
+          "level": 1
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Bir ülke ekonomisinin gidişatını anlamak için tek bir veriye bakmak çoğu zaman yanıltıcıdır. Ekonomik tablo, fiyatların nasıl değiştiğinden üretimin ne kadar arttığına, insanların iş bulup bulamadığından paranın maliyetine, dövizin seyrinden dış dünyayla kurulan ekonomik ilişkilere kadar birbiriyle bağlantılı birçok göstergenin birlikte değerlendirilmesini gerektirir. Bu göstergeler, ekonominin sadece ne kadar büyüdüğünü değil, bu büyümenin toplumun farklı kesimlerine nasıl yansıdığını, ne kadar sürdürülebilir olduğunu ve hangi riskleri barındırdığını da ortaya koyar. Enflasyon, büyüme, işsizlik, faiz, döviz kuru ve cari denge gibi temel değişkenler bir arada ele alındığında, bir ekonominin istikrarı, kırılganlıkları ve geleceğe dair yönü hakkında daha bütünlüklü ve sağlıklı bir değerlendirme yapmak mümkün hale gelir."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "Tüketici Fiyat Endeksi ve Enflasyon",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Mal ve hizmet fiyatlarındaki artış belli bir referans dönemindeki değişimi gösteren enflasyon bir ekonominin istikrarını ve sağlığını gösteren en önemli göstergelerden biri. Enflasyon, temelde bir para biriminin değerinde zamanla meydana gelen aşınmayı nicel bir şekilde ölçer. Ülke vatandaşlarının satın alma gücünü belirleyen en başat göstergedir."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Türkiye İstatistik Kurumu (TÜİK) her ayın ilk haftasında üretici ve tüketici fiyat endeksinde bir ay içinde meydana gelen değişimi kamuya açıklar. Birçok ekonomik aktör için bu iki endeksteki değişim ekonominin genel durumu için en temel bilgileri verir. Fakat çok bilinmese de TÜİK bu iki endeks dışında ay boyunca dört farklı kategoride endeks sonuçlarını da bu genel tabloya ekler. Dolayısıyla TÜİK'in takip ettiği 6 farklı fiyat endeksi vardır."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Fiyat seviyesi ve ağırlık bilgisi üzerinden oluşturulan Tüketici Fiyat Endeksi, enflasyon hesaplamaları için temeli oluşturur."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "Ekonomik Büyüme",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Ekonomik büyüme, bir ülkede belirli bir dönemde üretilen mal ve hizmetlerin toplam değerindeki artışı ifade eder. Bu gösterge genellikle Gayrisafi Yurt İçi Hasıla (GSYH) üzerinden ölçülür. Türkiye’de büyüme verileri, üçer aylık dönemler halinde açıklanır ve hem cari fiyatlarla hem de enflasyondan arındırılmış reel büyüme oranlarıyla takip edilir. Reel büyüme, fiyat artışlarının etkisini dışarıda bıraktığı için ekonomideki gerçek genişlemeyi görmeyi sağlar."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Büyüme oranı, ekonominin genel sağlığına dair en temel göstergelerden biridir. Yüksek büyüme, üretim kapasitesinin arttığına ve ekonomik faaliyetlerin canlandığına işaret ederken düşük ya da negatif büyüme, durgunluk ve daralma risklerini gündeme getirir. Ancak büyümenin niteliği de en az büyüklüğü kadar önemlidir. Yatırım ve ihracat kaynaklı bir büyüme ile kredi ve tüketime dayalı bir büyüme, orta ve uzun vadede çok farklı sonuçlar üretir. Yatırım ve ihracat kaynaklı büyüme görece yavaş ama krizlere karşı daha dirençliyken, kredi ve tüketime dayalı büyüme ise hızlı olmasına rağmen borçlanma sarmalına ve krizlere karşı kırılganlığa neden olur."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "İşsizlik Oranı",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "İşsizlik oranı, çalışma çağındaki nüfus içinde işsiz olanların toplam işgücüne oranını gösterir. Türkiye’de bu veri, TÜİK tarafından Hanehalkı İşgücü Araştırması üzerinden hesaplanır. İşsiz sayılabilmek için kişinin son dört hafta içinde aktif olarak iş aramış olması ve çalışmaya hazır durumda bulunması gerekir. Bu nedenle işsizlik oranı, yalnızca işsizliği değil, işgücüne katılım dinamiklerini de yansıtır."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "İşsizlik oranı, büyümenin topluma nasıl yansıdığını gösteren en kritik göstergelerden biridir. Ekonomi büyürken işsizlik düşmüyorsa, bu durum büyümenin istihdam yaratmadığına işaret eder. Özellikle genç işsizliği ve kadın işsizliği gibi alt kırılımlar, ekonomik ve sosyal risklerin erken sinyallerini verir. Uzun süreli yüksek işsizlik, gelir dağılımı bozulması ve yoksulluk riskini de beraberinde getirir."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "Politika Faizi",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Politika faizi, merkez bankasının para politikasını yönlendirmek için kullandığı temel faiz oranıdır. Türkiye’de bu oran, Merkez Bankası’nın bankalara uyguladığı bir haftalık repo ihale faizi üzerinden tanımlanır. Politika faizi, piyasadaki diğer faiz oranları için bir referans noktası oluşturur ve para politikasının sıkı ya da gevşek olup olmadığını gösterir."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Politika faizi, enflasyonla mücadelede ve finansal istikrarın sağlanmasında kilit bir araçtır. Faiz artışları, kredi maliyetlerini yükselterek talebi sınırlamayı; faiz indirimleri ise ekonomik aktiviteyi canlandırmayı hedefler. Aynı zamanda döviz kuru, sermaye hareketleri ve beklentiler üzerinde de doğrudan etkisi vardır. Bu nedenle politika faizi, sadece teknik bir oran değil, ekonomi yönetiminin genel yönelimini gösteren güçlü bir sinyal olarak izlenir."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "Döviz Kuru",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Döviz kuru, yerli paranın yabancı paralar karşısındaki değerini gösterir. Türkiye’de en çok takip edilen kur, ABD doları (USD) karşısındaki TL değeridir. Kur seviyesi ve kurdaki değişim, piyasada oluşan arz-talep dengesiyle belirlenir. Merkez Bankası’nın yayımladığı gösterge niteliğindeki kurlar ve bankalararası piyasa verileri bu alanda temel referans kabul edilir."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "USD/TL kuru, Türkiye ekonomisi için özellikle kritik bir göstergedir çünkü ithalat, dış borç ve enerji maliyetleri büyük ölçüde dövize bağlıdır. Kur artışları, maliyet kanalı üzerinden enflasyonu beslerken; kurdaki oynaklık, şirketlerin ve hanehalklarının ekonomik öngörülerini zorlaştırır. Aynı zamanda kur seviyesi, yabancı yatırımcı algısı ve sermaye giriş-çıkışları hakkında da güçlü ipuçları sunar."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "Cari Denge",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Cari denge, bir ülkenin dış dünyayla yaptığı mal ve hizmet ticareti, gelir transferleri ve yatırımların toplam sonucunu gösterir. Cari açık ya da fazla olarak ifade edilen bu gösterge, aylık ve yıllık kümülatif veriler üzerinden izlenir. Bir ülkenin dünyadan kazandığı döviz harcadığı dövizden yüksekse cari fazla, düşükse cari açık oluşur. Türkiye’de cari denge dış ticaret dengesi ve hizmetler dengesi gibi birincil ve ikincil gelir kalemlerinden oluşur."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Cari denge, bir ekonominin dış finansmana ne kadar ihtiyaç duyduğunu gösterir. Sürekli cari açık veren ülkeler, bu açığı finanse edebilmek için borçlanmaya ya da sermaye girişlerine bağımlı hale gelir. Bu durum, küresel koşullar değiştiğinde kırılganlık yaratır. Cari açığın azalması ya da fazla verilmesi ise döviz ihtiyacının düşmesi ve makroekonomik dayanıklılığın artması anlamına gelir."
+        }
+      },
+      {
+        "type": "citation",
+        "properties": {
+          "citation_text": "Bu içerik Doğruluk Payı editörleri tarafından her ay güncellenmektedir."
+        }
+      }
+    ]
+  }
+}

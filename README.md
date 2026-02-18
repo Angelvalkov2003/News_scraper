@@ -42,3 +42,15 @@ py run_article.py "https://..." --parse          # + парсване в Parsed_
 py run_article.py "https://..." --ai             # + JSON през Anthropic в AI_files/
 py run_article.py "https://..." --parse --ai     # fetch + парсване + AI
 ```
+
+## Една команда за dogrulukpayi.com
+
+Същата логика за doğrulukpayi.com: fetch взима само `section.r-section.r-section-withcard` и спира преди логото (path.LogoCheck).
+
+```bash
+cd dogrulukpayi.com
+py run_article.py "https://www.dogrulukpayi.com/dogrulama/..."
+py run_article.py "https://..." --parse
+py run_article.py "https://..." --ai
+py run_article.py "https://..." --parse --ai
+```

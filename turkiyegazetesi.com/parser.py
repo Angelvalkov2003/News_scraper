@@ -85,6 +85,20 @@ def _get_metadata(soup: BeautifulSoup, article: Tag, base_url: str) -> dict:
         if editor_name:
             authors.append({"name": editor_name, "url": None})
 
+    # title: og:title, then h1 in article, then <title>
+    title = None
+    og_title = head and head.find("meta", attrs={"property": "og:title"})
+    if og_title and og_title.get("content"):
+        title = (og_title.get("content") or "").strip()
+    if not title and article:
+        h1 = article.find("h1")
+        if h1 and h1.get_text(strip=True):
+            title = h1.get_text(strip=True)
+    if not title and head:
+        title_tag = head.find("title")
+        if title_tag and title_tag.get_text(strip=True):
+            title = title_tag.get_text(strip=True)
+
     # categories: .article-category-tag a
     categories = None
     cat_div = article.find("div", class_=lambda c: c and "article-category-tag" in (c if isinstance(c, str) else " ".join(c))) if article else None
@@ -99,6 +113,7 @@ def _get_metadata(soup: BeautifulSoup, article: Tag, base_url: str) -> dict:
                 categories.append({"name": name, "url": url})
 
     return {
+        "title": title or None,
         "document_date": document_date,
         "authors": authors if authors else None,
         "categories": categories,
@@ -275,7 +290,7 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     article_scope = soup.find("div", class_=lambda c: c and "article-scope" in (c if isinstance(c, str) else " ".join(c)))
     article = article_scope.find("article") if article_scope else None
 
-    metadata = _get_metadata(soup, article, base_url) if article else {"document_date": None, "authors": None, "categories": None, "tags": None}
+    metadata = _get_metadata(soup, article, base_url) if article else {"title": None, "document_date": None, "authors": None, "categories": None, "tags": None}
 
     components_list = []
     if article:
