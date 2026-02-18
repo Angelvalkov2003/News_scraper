@@ -1,7 +1,7 @@
 """
-Изпраща HTML статия към Claude API и записва резултата в AI_files/ с име на статията (scraped_article_json_schema.json).
-Пусни от папката birgun.net: python ai_extract.py <файл.html> [файл2.html ...]
-Изисква .env в корена на проекта с ANTHROPIC_API_KEY=...
+Send article HTML to Claude API and save result to AI_files/ with article slug (scraped_article_json_schema.json).
+Run from birgun.net folder: python ai_extract.py <file.html> [file2.html ...]
+Requires .env in project root with ANTHROPIC_API_KEY=...
 """
 
 import json
@@ -26,7 +26,7 @@ AI_FILES = SITE_DIR / "AI_files"
 def load_env():
     env_path = ROOT / ".env"
     if not env_path.exists():
-        raise SystemExit("Липсва .env в корена на проекта с ANTHROPIC_API_KEY=...")
+        raise SystemExit("Missing .env in project root with ANTHROPIC_API_KEY=...")
     for line in env_path.read_text(encoding="utf-8").strip().splitlines():
         line = line.strip()
         if line.startswith("#") or "=" not in line:
@@ -46,20 +46,20 @@ def extract_json_from_response(text: str) -> str:
 
 def main():
     if len(sys.argv) < 2:
-        print("Употреба: python ai_extract.py <файл.html> [файл2.html ...]", file=sys.stderr)
+        print("Usage: python ai_extract.py <file.html> [file2.html ...]", file=sys.stderr)
         sys.exit(1)
     load_env()
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
-        raise SystemExit("В .env липсва ANTHROPIC_API_KEY.")
+        raise SystemExit("ANTHROPIC_API_KEY missing in .env.")
     schema_path = ROOT / "scraped_article_json_schema.json"
     if not schema_path.exists():
-        raise SystemExit(f"Схемата не е намерена: {schema_path}")
+        raise SystemExit(f"Schema not found: {schema_path}")
     schema_content = schema_path.read_text(encoding="utf-8")
     try:
         import anthropic
     except ImportError:
-        raise SystemExit("Инсталирай: pip install anthropic")
+        raise SystemExit("Install: pip install anthropic")
     client = anthropic.Anthropic(api_key=api_key)
     AI_FILES.mkdir(parents=True, exist_ok=True)
     max_retries, wait_seconds = 3, 65
@@ -68,19 +68,19 @@ def main():
         if not html_path.is_absolute() and (SITE_DIR / html_arg).exists():
             html_path = (SITE_DIR / html_arg).resolve()
         if not html_path.exists():
-            print(f"Пропускам (няма файл): {html_path}", file=sys.stderr)
+            print(f"Skipping (file missing): {html_path}", file=sys.stderr)
             continue
         html_content = html_path.read_text(encoding="utf-8", errors="replace")
-        prompt = f"""Даден е HTML на статия от новинарски сайт и JSON Schema за изходния формат.
-Задача: извлечи от HTML всичка информация и върни ЕДИН валиден JSON обект, който отговаря на следната схема. Върни САМО JSON.
+        prompt = f"""You are given HTML of an article from a news site and a JSON Schema for the output format.
+Task: extract all information from the HTML and return ONE valid JSON object that conforms to the schema below. Return ONLY JSON.
 
-JSON Schema за изхода:
+JSON Schema for output:
 {schema_content}
 
-HTML на статията:
+Article HTML:
 {html_content}
 
-Върни един JSON обект с полета "metadata" и "components" според схемата."""
+Return a single JSON object with "metadata" and "components" per the schema."""
 
         for attempt in range(max_retries):
             try:
@@ -92,21 +92,21 @@ HTML на статията:
                 break
             except anthropic.RateLimitError as e:
                 if attempt + 1 >= max_retries:
-                    print("Грешка: лимит на заявки (429). Опитай след минута.", file=sys.stderr)
+                    print("Error: rate limit (429). Try again in a minute.", file=sys.stderr)
                     raise SystemExit(1) from e
-                print(f"Лимит (429). Изчаквам {wait_seconds} s...", file=sys.stderr)
+                print(f"Rate limit (429). Waiting {wait_seconds} s...", file=sys.stderr)
                 time.sleep(wait_seconds)
         response_text = message.content[0].text if message.content else ""
         raw_json = extract_json_from_response(response_text)
         try:
             data = json.loads(raw_json)
         except json.JSONDecodeError as e:
-            print(f"Claude върна невалиден JSON за {html_path.name}: {e}", file=sys.stderr)
+            print(f"Claude returned invalid JSON for {html_path.name}: {e}", file=sys.stderr)
             continue
         out_file = AI_FILES / f"{html_path.stem}.json"
         with open(out_file, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        print(f"Записано: {out_file}")
+        print(f"Written: {out_file}")
 
 
 if __name__ == "__main__":

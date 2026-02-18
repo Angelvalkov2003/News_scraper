@@ -1,4 +1,4 @@
-"""Изпраща HTML към Claude API и записва в AI_files/. Изисква .env в корена с ANTHROPIC_API_KEY=..."""
+"""Send HTML to Claude API and save to AI_files/. Requires .env in project root with ANTHROPIC_API_KEY=..."""
 
 import json
 import os
@@ -23,7 +23,7 @@ def load_env():
 
 def main():
     if len(sys.argv) < 2:
-        print("Употреба: python ai_extract.py <файл.html> [...]", file=sys.stderr)
+        print("Usage: python ai_extract.py <file.html> [...]", file=sys.stderr)
         sys.exit(1)
     load_env()
     schema_content = (ROOT / "scraped_article_json_schema.json").read_text(encoding="utf-8")
@@ -37,7 +37,7 @@ def main():
         if not html_path.exists():
             continue
         html_content = html_path.read_text(encoding="utf-8", errors="replace")
-        prompt = f"Извлечи от този HTML статия в JSON по дадена схема. Върни САМО JSON.\n\nSchema:\n{schema_content}\n\nHTML:\n{html_content}"
+        prompt = f"Extract this HTML article to JSON according to the given schema. Return ONLY JSON.\n\nSchema:\n{schema_content}\n\nHTML:\n{html_content}"
         for _ in range(3):
             try:
                 message = client.messages.create(model="claude-sonnet-4-20250514", max_tokens=8192, messages=[{"role": "user", "content": prompt}])
@@ -52,7 +52,7 @@ def main():
         except json.JSONDecodeError:
             continue
         (AI_FILES / f"{html_path.stem}.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"Записано: {AI_FILES / (html_path.stem + '.json')}")
+        print(f"Written: {AI_FILES / (html_path.stem + '.json')}")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-"""Парсва HTML -> scraped_article_json_schema.json в Parsed_files/. TODO: имплементирай за bbc.com."""
+"""Parse HTML -> scraped_article_json_schema.json to Parsed_files/. TODO: implement for bbc.com."""
 
 import json
 import sys
@@ -17,7 +17,7 @@ def main():
     PARSED_FILES.mkdir(parents=True, exist_ok=True)
     paths = list(HTML_FILES.glob("*.html")) if HTML_FILES.exists() else ([] if len(sys.argv) < 2 else [Path(p) for p in sys.argv[1:]])
     if not paths:
-        print("Няма HTML файлове.", file=sys.stderr)
+        print("No HTML files.", file=sys.stderr)
         sys.exit(1)
     for path in paths:
         if not path.exists():
@@ -25,7 +25,7 @@ def main():
         doc = parse_article_html(path.read_bytes())
         (PARSED_FILES / f"{path.stem}.json").write_text(json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"  {path.stem}.json")
-    print(f"Записано в {PARSED_FILES}")
+    print(f"Written to {PARSED_FILES}")
 
 
 if __name__ == "__main__":

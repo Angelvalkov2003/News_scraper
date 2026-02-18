@@ -1,7 +1,7 @@
 """
-Парсва само HTML на статията (от HTML_files/): един div.contentdetail с заглавие H1 и тяло до „Sıradaki Haber“.
-Изход: JSON във формата на scraped_article_json_schema.json (metadata + components), записан в Parsed_files/ с име на статията.
-Пусни от папката birgun.net: python parser.py [файл.html ...]   (по подразбиране всички от HTML_files/)
+Parse only article HTML (from HTML_files/): one div.contentdetail with H1 title and body up to "Sıradaki Haber".
+Output: JSON in scraped_article_json_schema.json format (metadata + components), saved to Parsed_files/ with article slug.
+Run from birgun.net folder: python parser.py [file.html ...]   (default: all from HTML_files/)
 """
 
 import json
@@ -197,23 +197,23 @@ def main():
     else:
         paths = list(HTML_FILES.glob("*.html")) if HTML_FILES.exists() else []
     if not paths:
-        print("Няма HTML файлове. Добави пътища или пусни fetch_html.py първо.", file=sys.stderr)
+        print("No HTML files. Add paths or run fetch_html.py first.", file=sys.stderr)
         sys.exit(1)
     for path in paths:
         if not path.exists():
-            print(f"Пропускам (няма файл): {path}", file=sys.stderr)
+            print(f"Skipping (file missing): {path}", file=sys.stderr)
             continue
         raw = path.read_bytes()
         try:
             doc = parse_article_html(raw, base_url=BASE_URL)
         except Exception as e:
-            print(f"Грешка при парсване {path}: {e}", file=sys.stderr)
+            print(f"Error parsing {path}: {e}", file=sys.stderr)
             continue
         out = PARSED_FILES / f"{path.stem}.json"
         with open(out, "w", encoding="utf-8") as f:
             json.dump(doc, f, ensure_ascii=False, indent=2)
         print(f"  {out.name}")
-    print(f"Записано в {PARSED_FILES}")
+    print(f"Written to {PARSED_FILES}")
 
 
 if __name__ == "__main__":

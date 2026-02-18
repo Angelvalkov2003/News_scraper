@@ -1,26 +1,26 @@
 # News Scraper
 
-## Структура
+## Structure
 
-**Корен (главна папка):**
-- `.env` – API ключове (ANTHROPIC_API_KEY и др.)
-- `scraped_article_json_schema.json` – обща схема за всички изходи
-- `recent_posts_turkish_news_websites.json` – списък с постове/URL-и
-- `requirements.txt` – Python зависимости
-- `schema_validator.py` – валидация спрямо схемата
-- `README.md` – този файл
+**Root:**
+- `.env` – API keys (ANTHROPIC_API_KEY, etc.)
+- `scraped_article_json_schema.json` – shared schema for all outputs
+- `recent_posts_turkish_news_websites.json` – list of posts/URLs
+- `requirements.txt` – Python dependencies
+- `schema_validator.py` – validation against the schema
+- `README.md` – this file
 
-**Папка за всеки уебсайт:** `birgun.net`, `turkiyegazetesi.com`, `bbc.com`, `dogrulukpayi.com` (добавяш още по същия модел).
+**Per-site folder:** `birgun.net`, `turkiyegazetesi.com`, `bbc.com`, `dogrulukpayi.com` (add more following the same pattern).
 
-Във всяка такава папка:
-- **fetch_html.py** – взима HTML от уебсайта, записва в `HTML_files/` с име на статията (slug).
-- **parser.py** – парсва HTML във формат `scraped_article_json_schema.json`, записва в `Parsed_files/` с име на статията.
-- **ai_extract.py** – изпраща HTML към Claude API, записва в `AI_files/` в същия формат, с име на статията.
-- **HTML_files/** – съхранени HTML файлове (име на файла = име на статията).
-- **Parsed_files/** – JSON от парсъра (име на статията).
-- **AI_files/** – JSON от Claude (име на статията).
+In each site folder:
+- **fetch_html.py** – fetches HTML from the site, saves to `HTML_files/` with the article slug as filename.
+- **parser.py** – parses HTML into `scraped_article_json_schema.json` format, saves to `Parsed_files/` with the article slug.
+- **ai_extract.py** – sends HTML to Claude API, saves to `AI_files/` in the same format, with the article slug.
+- **HTML_files/** – saved HTML files (filename = article slug).
+- **Parsed_files/** – JSON from the parser (article slug).
+- **AI_files/** – JSON from Claude (article slug).
 
-## Пример за birgun.net
+## Example for birgun.net
 
 ```bash
 cd birgun.net
@@ -29,23 +29,23 @@ python parser.py
 python ai_extract.py HTML_files/kultur-sanat-ajandasi-691769.html
 ```
 
-За останалите сайтове (`turkiyegazetesi.com`, `bbc.com`, `dogrulukpayi.com`) fetch и parser са шаблон – адаптирай селекторите и URL логиката за всеки домейн. AI скриптът е готов за ползване.
+For other sites (`turkiyegazetesi.com`, `bbc.com`, `dogrulukpayi.com`), fetch and parser are templates – adapt selectors and URL logic per domain. The AI script is ready to use.
 
-## Една команда за turkiyegazetesi.com
+## One-command for turkiyegazetesi.com
 
-От папката `turkiyegazetesi.com` можеш да подадеш само линк; с флагове се добавят парсване и/или AI JSON:
+From the `turkiyegazetesi.com` folder you can pass just the URL; flags add parsing and/or AI JSON:
 
 ```bash
 cd turkiyegazetesi.com
 py run_article.py "https://www.turkiyegazetesi.com.tr/ekonomi/..."
-py run_article.py "https://..." --parse          # + парсване в Parsed_files/
-py run_article.py "https://..." --ai             # + JSON през Anthropic в AI_files/
-py run_article.py "https://..." --parse --ai     # fetch + парсване + AI
+py run_article.py "https://..." --parse          # + parse to Parsed_files/
+py run_article.py "https://..." --ai             # + JSON via Anthropic to AI_files/
+py run_article.py "https://..." --parse --ai     # fetch + parse + AI
 ```
 
-## Една команда за dogrulukpayi.com
+## One-command for dogrulukpayi.com
 
-Същата логика за doğrulukpayi.com: fetch взима само `section.r-section.r-section-withcard` и спира преди логото (path.LogoCheck).
+Same flow for doğrulukpayi.com: fetch keeps only `section.r-section.r-section-withcard` and stops before the logo (path.LogoCheck).
 
 ```bash
 cd dogrulukpayi.com

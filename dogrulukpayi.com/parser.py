@@ -1,6 +1,6 @@
 """
-Парсва HTML от HTML_files/ във формат scraped_article_json_schema.json, записва в Parsed_files/.
-Настроен за dogrulukpayi.com: section.r-section (или body при пълен HTML), metadata от head + JSON-LD.
+Parse HTML from HTML_files/ into scraped_article_json_schema.json format, write to Parsed_files/.
+Configured for dogrulukpayi.com: section.r-section (or body for full HTML), metadata from head + JSON-LD.
 """
 
 import json
@@ -61,7 +61,7 @@ def _figcaption_text(figcap: Tag) -> str:
 
 
 def _json_ld_article(soup: BeautifulSoup) -> dict | None:
-    """Връща Article обект от JSON-LD в head, ако има."""
+    """Return Article object from JSON-LD in head if present."""
     head = soup.find("head")
     if not head:
         return None
@@ -225,7 +225,7 @@ def _lead_media_components(content_root: Tag) -> list:
 
 
 def _block_components_from_content(container: Tag) -> list:
-    """Обхожда децата на контейнера и добавя компоненти (като turkiyegazetesi)."""
+    """Walk container children and add components (same logic as turkiyegazetesi)."""
     components = []
     if not container:
         return components
@@ -343,7 +343,7 @@ def _block_components_from_content(container: Tag) -> list:
 
 
 def _get_next_data_content(html_str: str) -> dict | None:
-    """Ако страницата е Next.js, връща props.pageProps. Иначе None."""
+    """If page is Next.js, return props.pageProps. Otherwise None."""
     idx = html_str.find('id="__NEXT_DATA__"')
     if idx < 0:
         idx = html_str.find("id='__NEXT_DATA__'")
@@ -364,7 +364,7 @@ def _get_next_data_content(html_str: str) -> dict | None:
 
 
 def _html_to_markdown(html_fragment: str) -> str:
-    """Превръща HTML фрагмент (<i>, <b>, <a>...) в markdown."""
+    """Convert HTML fragment (<i>, <b>, <a>...) to markdown."""
     if not html_fragment or not html_fragment.strip():
         return ""
     soup = BeautifulSoup("<div>" + html_fragment.replace("\x00", "") + "</div>", "html.parser")
@@ -373,7 +373,7 @@ def _html_to_markdown(html_fragment: str) -> str:
 
 
 def _components_from_next_content_blocks(content_blocks) -> list:
-    """Превръща contentBlocks от __NEXT_DATA__ в компоненти. Може да е dict с .blocks, или list от {blocks: [...]} или [...]."""
+    """Convert contentBlocks from __NEXT_DATA__ to components. May be dict with .blocks, or list of {blocks: [...]} or [...]."""
     blocks = []
     if isinstance(content_blocks, dict) and "blocks" in content_blocks:
         blocks = content_blocks.get("blocks") or []
@@ -433,7 +433,7 @@ def _components_from_next_content_blocks(content_blocks) -> list:
 
 
 def _metadata_from_next_content(content: dict, base_url: str) -> dict | None:
-    """Допълва/връща metadata от pageProps.content (title, authors, published, categories)."""
+    """Enrich/return metadata from pageProps.content (title, authors, published, categories)."""
     if not content or not isinstance(content, dict):
         return None
     doc_date = None
@@ -468,7 +468,7 @@ def _metadata_from_next_content(content: dict, base_url: str) -> dict | None:
 
 
 def _collect_blocks_from_body(body: Tag) -> list:
-    """При пълен HTML без section: събира всички блокови елементи в ред (h1–h6, p, figure, ...), пропуска script/style/svg."""
+    """For full HTML without section: collect all block elements in order (h1–h6, p, figure, ...), skip script/style/svg."""
     blocks = []
     skip_tags = {"script", "style", "link", "noscript", "svg"}
 
@@ -489,7 +489,7 @@ def _collect_blocks_from_body(body: Tag) -> list:
 
 
 def _components_from_blocks(blocks: list) -> list:
-    """Превръща списък от блокови тагове в компоненти (същата логика като _block_components_from_content)."""
+    """Convert list of block tags to components (same logic as _block_components_from_content)."""
     components = []
     for tag in blocks:
         if tag.name in ("h1", "h2", "h3", "h4", "h5", "h6"):
@@ -553,7 +553,7 @@ def _components_from_blocks(blocks: list) -> list:
 
 def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     """
-    Парсва HTML за dogrulukpayi.com: section.r-section, или __NEXT_DATA__.contentBlocks, или body/JSON-LD.
+    Parse HTML for dogrulukpayi.com: section.r-section, or __NEXT_DATA__.contentBlocks, or body/JSON-LD.
     """
     html_str = html_raw.decode("utf-8", errors="replace")
     soup = BeautifulSoup(html_raw, "html.parser")
@@ -613,7 +613,7 @@ def main():
     if not paths and len(sys.argv) > 1:
         paths = [Path(p) for p in sys.argv[1:]]
     if not paths:
-        print("Няма HTML файлове. Пусни fetch_html.py първо.", file=sys.stderr)
+        print("No HTML files. Run fetch_html.py first.", file=sys.stderr)
         sys.exit(1)
     for path in paths:
         if not path.exists():
@@ -621,7 +621,7 @@ def main():
         doc = parse_article_html(path.read_bytes())
         (PARSED_FILES / f"{path.stem}.json").write_text(json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"  {path.stem}.json")
-    print(f"Записано в {PARSED_FILES}")
+    print(f"Written to {PARSED_FILES}")
 
 
 if __name__ == "__main__":

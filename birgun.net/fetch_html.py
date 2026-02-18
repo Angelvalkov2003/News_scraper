@@ -1,7 +1,7 @@
 """
-Сваля HTML на статии от birgun.net и записва в HTML_files/ само съдържанието на новината:
-от div.contentdetail (заглавие H1 и тяло) до преди първия „Sıradaki Haber“. Без навбар, меню, реклами.
-Пусни от папката birgun.net: python fetch_html.py <URL> [URL ...]
+Fetch article HTML from birgun.net and save to HTML_files/ only the article content:
+from div.contentdetail (H1 title and body) up to before the first "Sıradaki Haber". No navbar, menu, ads.
+Run from birgun.net folder: python fetch_html.py <URL> [URL ...]
 """
 
 import re
@@ -24,18 +24,18 @@ UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like 
 
 
 def url_to_slug(url: str) -> str:
-    """От URL връща slug за име на файл (напр. .../makale/slug-123 -> slug-123)."""
+    """Return slug for filename from URL (e.g. .../makale/slug-123 -> slug-123)."""
     path = url.strip().rstrip("/").split("/")[-1] or "page"
     return path if not path.endswith(".html") else path[:-5]
 
 
-# Meta тагове, които парсърът използва за metadata (document_date, authors, categories, tags)
+# Meta tags used by parser for metadata (document_date, authors, categories, tags)
 _META_NAMES = ("datePublished", "articleAuthor", "articleSection", "keywords", "ptime")
-_META_PROPERTIES = ("datePublished",)  # property="datePublished" и т.н.
+_META_PROPERTIES = ("datePublished",)  # property="datePublished" etc.
 
 
 def _build_minimal_head(soup: BeautifulSoup) -> str:
-    """Само meta тагове за document_date, authors, categories, tags – без скриптове/стилове."""
+    """Only meta tags for document_date, authors, categories, tags – no scripts/styles."""
     parts = ['<head><meta charset="utf-8">']
     head = soup.find("head")
     if not head:
@@ -50,8 +50,8 @@ def _build_minimal_head(soup: BeautifulSoup) -> str:
 
 def extract_article_only(html: str) -> str:
     """
-    Оставя само съдържанието на статията: div.contentdetail (от H1 до преди „Sıradaki Haber“).
-    В head записва само нужните meta тагове за metadata (дата, автор, категория, тагове) – без дълги скриптове.
+    Keep only article content: div.contentdetail (from H1 up to before "Sıradaki Haber").
+    In head write only the meta tags needed for metadata (date, author, category, tags) – no long scripts.
     """
     soup = BeautifulSoup(html, "html.parser")
     head_str = _build_minimal_head(soup)
@@ -72,7 +72,7 @@ def extract_article_only(html: str) -> str:
 
 def main():
     if len(sys.argv) < 2:
-        print("Употреба: python fetch_html.py <URL> [URL ...]", file=sys.stderr)
+        print("Usage: python fetch_html.py <URL> [URL ...]", file=sys.stderr)
         sys.exit(1)
     HTML_FILES.mkdir(parents=True, exist_ok=True)
     session = requests.Session()
@@ -89,9 +89,9 @@ def main():
             slug = url_to_slug(url)
             path = HTML_FILES / f"{slug}.html"
             path.write_text(html_clean, encoding="utf-8")
-            print(f"Записано: {path}")
+            print(f"Written: {path}")
         except requests.RequestException as e:
-            print(f"Грешка {url}: {e}", file=sys.stderr)
+            print(f"Error {url}: {e}", file=sys.stderr)
         if len(sys.argv) > 2:
             time.sleep(1)
 

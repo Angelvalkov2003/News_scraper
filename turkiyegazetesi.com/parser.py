@@ -1,6 +1,6 @@
 """
-Парсва HTML от HTML_files/ във формат scraped_article_json_schema.json, записва в Parsed_files/.
-HTML е минимален (fetch_html.py): head с meta, div.article-scope > article.
+Parse HTML from HTML_files/ into scraped_article_json_schema.json format, write to Parsed_files/.
+HTML is minimal (fetch_html.py): head with meta, div.article-scope > article.
 """
 
 import json
@@ -283,8 +283,8 @@ def _block_components_from_article_content(article_content: Tag) -> list:
 
 def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     """
-    Парсва HTML от fetch_html.py за turkiyegazetesi.com и връща dict,
-    който стриктно отговаря на scraped_article_json_schema.json (MarkdownDocument).
+    Parse HTML from fetch_html.py for turkiyegazetesi.com and return a dict
+    that strictly conforms to scraped_article_json_schema.json (MarkdownDocument).
     """
     soup = BeautifulSoup(html_raw, "html.parser")
     article_scope = soup.find("div", class_=lambda c: c and "article-scope" in (c if isinstance(c, str) else " ".join(c)))
@@ -313,7 +313,7 @@ def main():
     if not paths and len(sys.argv) > 1:
         paths = [Path(p) for p in sys.argv[1:]]
     if not paths:
-        print("Няма HTML файлове. Пусни fetch_html.py първо.", file=sys.stderr)
+        print("No HTML files. Run fetch_html.py first.", file=sys.stderr)
         sys.exit(1)
     for path in paths:
         if not path.exists():
@@ -321,7 +321,7 @@ def main():
         doc = parse_article_html(path.read_bytes())
         (PARSED_FILES / f"{path.stem}.json").write_text(json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"  {path.stem}.json")
-    print(f"Записано в {PARSED_FILES}")
+    print(f"Written to {PARSED_FILES}")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 """
-Изпраща HTML към Anthropic (Claude) API; моделът извлича съдържанието и връща JSON
-стриктно по scraped_article_json_schema.json (MarkdownDocument). Запис в AI_files/.
-Изисква .env в корена на проекта с ANTHROPIC_API_KEY=...
+Send HTML to Anthropic (Claude) API; the model extracts content and returns JSON
+strictly per scraped_article_json_schema.json (MarkdownDocument). Output to AI_files/.
+Requires .env in project root with ANTHROPIC_API_KEY=...
 """
 
 import json
@@ -26,7 +26,7 @@ HTML_FILES = SITE_DIR / "HTML_files"
 def load_env():
     env_path = ROOT / ".env"
     if not env_path.exists():
-        raise SystemExit("Липсва .env в корена на проекта с ANTHROPIC_API_KEY=...")
+        raise SystemExit("Missing .env in project root with ANTHROPIC_API_KEY=...")
     for line in env_path.read_text(encoding="utf-8").strip().splitlines():
         line = line.strip()
         if line.startswith("#") or "=" not in line:
@@ -60,47 +60,47 @@ def _strip_nulls_for_schema(obj):
 
 
 def build_prompt(schema_content: str, html_content: str) -> str:
-    return f"""Ти си асистент, който извлича структурирани данни от HTML статия и ги връща като един валиден JSON обект.
+    return f"""You are an assistant that extracts structured data from an HTML article and returns a single valid JSON object.
 
-СТРУКТУРА НА ИЗХОДА (задължително спазвай):
-- Коренът е обект с точно два ключа: "metadata" и "components".
-- "metadata": обект с ключове document_date, authors, categories, tags (всички от head/article както са описани по-долу).
-- "components": обект с един ключ "components", чиято стойност е масив от компоненти в реда на срещане в текста.
+OUTPUT STRUCTURE (must follow):
+- Root is an object with exactly two keys: "metadata" and "components".
+- "metadata": object with keys document_date, authors, categories, tags (all from head/article as described below).
+- "components": object with one key "components", whose value is an array of components in order of appearance in the text.
 
-METADATA (от head и article):
-- document_date: ISO 8601 дата от meta[property="article:published_time"] или meta[name="datePublished"] (content). Ако липсва → null.
-- authors: масив от {{"name": "<име>", "url": null}}. Добави автор от meta[property="article:author"] или meta[name="articleAuthor"]. Ако в article има блок за редактор (напр. "Editör : ..." с линк), добави втори елемент с името на редактора, url: null.
-- categories: масив от {{"name": "<категория>", "url": "<пълен URL ако има href>"}} от елементите в .article-category-tag (напр. линк с текст "Ekonomi" и href="/ekonomi" → name "Ekonomi", url "https://www.turkiyegazetesi.com.tr/ekonomi"). Ако няма → null.
-- tags: винаги null.
+METADATA (from head and article):
+- document_date: ISO 8601 date from meta[property="article:published_time"] or meta[name="datePublished"] (content). If missing → null.
+- authors: array of {{"name": "<name>", "url": null}}. Add author from meta[property="article:author"] or meta[name="articleAuthor"]. If article has editor block (e.g. "Editör : ..." with link), add second element with editor name, url: null.
+- categories: array of {{"name": "<category>", "url": "<full URL if href>"}} from .article-category-tag elements (e.g. link text "Ekonomi" href="/ekonomi" → name "Ekonomi", url "https://www.turkiyegazetesi.com.tr/ekonomi"). If none → null.
+- tags: always null.
 
-COMPONENTI (в реда на поява в article):
-HTML съдържа div.article-scope > article. В него може да има:
-- Първа медия (преди article-content): div.article-main-image с <video> или <img>. Video → type "video", properties {{"url": src от <source>, "thumbnail_image_url": poster от <video> ако има}}. Image → type "image", properties {{"url": src, "description": alt, "caption": текст от figcaption ако има}}.
-- В div.article-content (itemprop="articleBody"): обходи елементите в ред и създай компоненти:
-  - h1–h6 → {{"type": "heading", "properties": {{"text": "<съдържание>", "level": 1–6}}}}
-  - p → {{"type": "paragraph", "properties": {{"text": "<текст с markdown: **bold**, *italic*>"}}}}
-  - blockquote → {{"type": "citation", "properties": {{"citation_text": "<цитат>"}}}}
-  - figure / img с опционално figcaption → {{"type": "image", "properties": {{"url": "<src>", "description": "<alt>", "caption": "<figcaption текст> ако има"}}}}. Не включвай ключ caption ако няма caption.
+COMPONENTS (in order of appearance in article):
+HTML contains div.article-scope > article. It may have:
+- First media (before article-content): div.article-main-image with <video> or <img>. Video → type "video", properties {{"url": src from <source>, "thumbnail_image_url": poster from <video> if present}}. Image → type "image", properties {{"url": src, "description": alt, "caption": figcaption text if present}}.
+- In div.article-content (itemprop="articleBody"): walk elements in order and create components:
+  - h1–h6 → {{"type": "heading", "properties": {{"text": "<content>", "level": 1–6}}}}
+  - p → {{"type": "paragraph", "properties": {{"text": "<text with markdown: **bold**, *italic*>"}}}}
+  - blockquote → {{"type": "citation", "properties": {{"citation_text": "<quote>"}}}}
+  - figure / img with optional figcaption → {{"type": "image", "properties": {{"url": "<src>", "description": "<alt>", "caption": "<figcaption text> if present"}}}}. Omit caption key if no caption.
   - hr → {{"type": "horizontal_ruler", "properties": {{}}}}
-  - ul → {{"type": "list", "properties": {{"items": [{{"indent": 0, "bullet": "-", "content": "<текст на li>"}}, ...]}}}}
+  - ul → {{"type": "list", "properties": {{"items": [{{"indent": 0, "bullet": "-", "content": "<li text>"}}, ...]}}}}
   - ol → {{"type": "list", "properties": {{"items": [{{"indent": 0, "bullet": "1.", "content": "..."}}, {{"indent": 0, "bullet": "2.", "content": "..."}}, ...]}}}}
-  - table → {{"type": "table", "properties": {{"headers": ["<th или първи ред>"], "rows": [["<cell>", ...], ...]}}}}
-  - pre/code → {{"type": "code_block", "properties": {{"code": "<съдържание>", "language": null}}}}
-- Блокове като "Editör", "Paylaş", коментари, препоръки — не ги превръщай в компоненти; използвай редактора само за metadata.authors.
+  - table → {{"type": "table", "properties": {{"headers": ["<th or first row>"], "rows": [["<cell>", ...], ...]}}}}
+  - pre/code → {{"type": "code_block", "properties": {{"code": "<content>", "language": null}}}}
+- Blocks like "Editör", "Paylaş", comments, recommendations — do not turn into components; use editor only for metadata.authors.
 
-ПРАВИЛА:
-- Върни САМО един валиден JSON обект, без коментари и без текст преди/след него.
-- Не добавяй празни компоненти. Не дублирай съдържание.
-- За optional полета (caption, description и т.н.) не включвай ключа, ако няма стойност — не пиши "caption": null.
-- Текстът в paragraph/heading трябва да запазва markdown: **удебелен**, *курсив*, ***и двете***.
+RULES:
+- Return ONLY one valid JSON object, no comments and no text before/after it.
+- Do not add empty components. Do not duplicate content.
+- For optional fields (caption, description, etc.) do not include the key if there is no value — do not write "caption": null.
+- Text in paragraph/heading must preserve markdown: **bold**, *italic*, ***both***.
 
-JSON Schema (за референция по типовете и имената):
+JSON Schema (for type and key reference):
 
 {schema_content}
 
 ---
 
-HTML на статията:
+Article HTML:
 
 {html_content}
 """
@@ -110,7 +110,7 @@ def main():
     if len(sys.argv) < 2:
         paths = list(HTML_FILES.glob("*.html")) if HTML_FILES.exists() else []
         if not paths:
-            print("Употреба: python ai_extract.py <файл.html> [файл2.html ...]", file=sys.stderr)
+            print("Usage: python ai_extract.py <file.html> [file2.html ...]", file=sys.stderr)
             sys.exit(1)
         html_args = [str(p) for p in paths]
     else:
@@ -118,16 +118,16 @@ def main():
     load_env()
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
-        raise SystemExit("В .env липсва ANTHROPIC_API_KEY.")
+        raise SystemExit("ANTHROPIC_API_KEY missing in .env.")
     schema_path = ROOT / "scraped_article_json_schema.json"
     if not schema_path.exists():
-        raise SystemExit(f"Схемата не е намерена: {schema_path}")
+        raise SystemExit(f"Schema not found: {schema_path}")
     schema_content = schema_path.read_text(encoding="utf-8")
     try:
         import anthropic
         import jsonschema
     except ImportError as e:
-        raise SystemExit(f"Инсталирай зависимостите: pip install anthropic jsonschema. {e}")
+        raise SystemExit(f"Install dependencies: pip install anthropic jsonschema. {e}")
     schema = json.loads(schema_content)
     client = anthropic.Anthropic(api_key=api_key)
     AI_FILES.mkdir(parents=True, exist_ok=True)
@@ -139,7 +139,7 @@ def main():
         if not html_path.exists() and (HTML_FILES / html_arg).exists():
             html_path = (HTML_FILES / html_arg).resolve()
         if not html_path.exists():
-            print(f"Пропускам: {html_path}", file=sys.stderr)
+            print(f"Skipping: {html_path}", file=sys.stderr)
             continue
         html_content = html_path.read_text(encoding="utf-8", errors="replace")
         prompt = build_prompt(schema_content, html_content)
@@ -154,26 +154,26 @@ def main():
                 break
             except anthropic.RateLimitError:
                 if attempt + 1 >= max_retries:
-                    raise SystemExit("Rate limit; опитай по-късно.")
+                    raise SystemExit("Rate limit; try again later.")
                 time.sleep(wait_seconds)
         if not message or not message.content:
-            print(f"Празен отговор за {html_path.name}", file=sys.stderr)
+            print(f"Empty response for {html_path.name}", file=sys.stderr)
             continue
         response_text = message.content[0].text if message.content else ""
         raw_json = extract_json_from_response(response_text)
         try:
             data = json.loads(raw_json)
         except json.JSONDecodeError as e:
-            print(f"Невалиден JSON за {html_path.name}: {e}", file=sys.stderr)
+            print(f"Invalid JSON for {html_path.name}: {e}", file=sys.stderr)
             continue
         data = _strip_nulls_for_schema(data)
         try:
             jsonschema.validate(data, schema)
         except jsonschema.ValidationError as e:
-            print(f"Внимание: изходът не отговаря на схемата за {html_path.name}: {e}", file=sys.stderr)
+            print(f"Warning: output does not match schema for {html_path.name}: {e}", file=sys.stderr)
         out_file = AI_FILES / f"{html_path.stem}.json"
         out_file.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"Записано: {out_file}")
+        print(f"Written: {out_file}")
 
 
 if __name__ == "__main__":

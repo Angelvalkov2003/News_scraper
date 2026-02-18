@@ -1,4 +1,4 @@
-"""Сваля HTML на статии и записва в HTML_files/. TODO: адаптирай за bbc.com."""
+"""Fetch article HTML and save to HTML_files/. TODO: adapt for bbc.com."""
 
 import sys
 from pathlib import Path
@@ -14,7 +14,7 @@ def url_to_slug(url: str) -> str:
 
 def main():
     if len(sys.argv) < 2:
-        print("Употреба: python fetch_html.py <URL> [URL ...]", file=sys.stderr)
+        print("Usage: python fetch_html.py <URL> [URL ...]", file=sys.stderr)
         sys.exit(1)
     HTML_FILES.mkdir(parents=True, exist_ok=True)
     import requests
@@ -29,9 +29,9 @@ def main():
             r.raise_for_status()
             slug = url_to_slug(url)
             (HTML_FILES / f"{slug}.html").write_bytes(r.content)
-            print(f"Записано: {HTML_FILES / (slug + '.html')}")
+            print(f"Written: {HTML_FILES / (slug + '.html')}")
         except Exception as e:
-            print(f"Грешка {url}: {e}", file=sys.stderr)
+            print(f"Error {url}: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 """
-Сваля HTML на статии от turkiyegazetesi.com.tr и записва в HTML_files/ само съдържанието на новината:
-само <div class="article-scope"> с един <article> вътре, без навбар, sidebar, препоръки, споделяне, коментари.
-Пусни от папката turkiyegazetesi.com: python fetch_html.py <URL> [URL ...]
+Fetch article HTML from turkiyegazetesi.com.tr and save to HTML_files/ only the article content:
+only <div class="article-scope"> with one <article> inside, no navbar, sidebar, recommendations, share, comments.
+Run from turkiyegazetesi.com folder: python fetch_html.py <URL> [URL ...]
 """
 
 import sys
@@ -21,27 +21,27 @@ SITE_DIR = Path(__file__).resolve().parent
 HTML_FILES = SITE_DIR / "HTML_files"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-# Meta тагове за metadata (парсър / AI)
+# Meta tags for metadata (parser / AI)
 _META_NAMES = ("datePublished", "dateModified", "dateCreated", "articleAuthor", "articleSection")
 _META_PROPERTIES = ("article:published_time", "article:modified_time", "article:author", "article:section")
 
-# Класове на блокове за премахване от article
+# Block classes to remove from article
 _REMOVE_BLOCK_CLASSES = frozenset({
     "article-recommended", "article-related", "article-follow-us",
     "article-social-publish", "article-sp-share", "comments",
 })
-# Допълнителни елементи за премахване (бутони за споделяне, запазване, размер на шрифт)
+# Additional elements to remove (share, save, font-size buttons)
 _REMOVE_SELECTORS = ("article-actions", "listenSummarySave")
 
 
 def url_to_slug(url: str) -> str:
-    """Последният сегмент от пътя: .../gundem/slug-1770154 -> slug-1770154"""
+    """Last path segment: .../gundem/slug-1770154 -> slug-1770154"""
     path = url.strip().rstrip("/").split("/")[-1] or "page"
     return path if not path.endswith(".html") else path[:-5]
 
 
 def _build_minimal_head(soup: BeautifulSoup) -> str:
-    """Само meta за дата, автор, категория – без скриптове/стилове/линкове."""
+    """Only meta for date, author, category – no scripts/styles/links."""
     parts = ['<head><meta charset="utf-8">']
     head = soup.find("head")
     if not head:
@@ -55,7 +55,7 @@ def _build_minimal_head(soup: BeautifulSoup) -> str:
 
 
 def _remove_comments_and_after(article: BeautifulSoup) -> None:
-    """Премахва блока comments и всички следващи siblings в article."""
+    """Remove the comments block and all following siblings in article."""
     comments = article.find("div", class_=lambda c: c and "comments" in (c if isinstance(c, str) else " ".join(c)))
     if not comments:
         return
@@ -65,7 +65,7 @@ def _remove_comments_and_after(article: BeautifulSoup) -> None:
 
 
 def _remove_blocks_by_class(article: BeautifulSoup) -> None:
-    """Премахва всички елементи с дадените блокови класове."""
+    """Remove all elements with the given block classes."""
     to_remove = []
     for tag in article.find_all(True):
         if not tag.get("class"):
@@ -78,14 +78,14 @@ def _remove_blocks_by_class(article: BeautifulSoup) -> None:
 
 
 def _remove_actions_and_save(article: BeautifulSoup) -> None:
-    """Премахва article-actions и listenSummarySave (споделяне, Kaydet, a-|+A)."""
+    """Remove article-actions and listenSummarySave (share, Kaydet, a-|+A)."""
     for sel in _REMOVE_SELECTORS:
         for tag in article.find_all(class_=lambda c: c and sel in (c if isinstance(c, str) else " ".join(c))):
             tag.decompose()
 
 
 def _clean_media_containers(article: BeautifulSoup) -> None:
-    """В контейнери с медия премахва скриптове, adContainer, playButton; запазва video/source."""
+    """In media containers remove scripts, adContainer, playButton; keep video/source."""
     for tag in article.find_all("script"):
         tag.decompose()
     for tag in article.find_all("div", id=lambda x: x and str(x).startswith("playButton-")):
@@ -95,7 +95,7 @@ def _clean_media_containers(article: BeautifulSoup) -> None:
 
 
 def _extract_article_clean(article_scope: BeautifulSoup):
-    """Връща очистен <article> (Tag) с премахнати бокове и UI."""
+    """Return cleaned <article> (Tag) with blocks and UI removed."""
     article = article_scope.find("article")
     if not article:
         return None
@@ -112,10 +112,10 @@ def _extract_article_clean(article_scope: BeautifulSoup):
 
 def extract_article_only(html: str) -> str:
     """
-    Взема само div.article-scope и вътре само <article> с нужното съдържание.
-    Премахва навбар, sidebar, препоръки, споделяне, коментари, бутони, скриптове в медия.
-    Head: само изброените meta тагове.
-    Ако няма article-scope, връща оригиналния HTML непроменен.
+    Extract only div.article-scope and inside it only <article> with required content.
+    Removes navbar, sidebar, recommendations, share, comments, buttons, scripts in media.
+    Head: only the listed meta tags.
+    If no article-scope, return original HTML unchanged.
     """
     soup = BeautifulSoup(html, "html.parser")
     article_scope = soup.find("div", class_=lambda c: c and "article-scope" in (c if isinstance(c, str) else " ".join(c)))
@@ -141,7 +141,7 @@ def extract_article_only(html: str) -> str:
 
 def main():
     if len(sys.argv) < 2:
-        print("Употреба: python fetch_html.py <URL> [URL ...]", file=sys.stderr)
+        print("Usage: python fetch_html.py <URL> [URL ...]", file=sys.stderr)
         sys.exit(1)
     HTML_FILES.mkdir(parents=True, exist_ok=True)
     session = requests.Session()
@@ -158,9 +158,9 @@ def main():
             slug = url_to_slug(url)
             path = HTML_FILES / f"{slug}.html"
             path.write_text(html_clean, encoding="utf-8")
-            print(f"Записано: {path}")
+            print(f"Written: {path}")
         except requests.RequestException as e:
-            print(f"Грешка {url}: {e}", file=sys.stderr)
+            print(f"Error {url}: {e}", file=sys.stderr)
         if len(sys.argv) > 2:
             time.sleep(1)
 

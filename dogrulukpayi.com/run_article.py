@@ -1,11 +1,11 @@
 """
-Една команда: дадеш линк → сваля HTML; с флагове парсваш / генерираш JSON през AI.
+Single command: pass URL → fetch HTML; with flags run parser and/or AI JSON.
 
-Употреба:
-  py run_article.py <URL>              → само сваля HTML в HTML_files/
-  py run_article.py <URL> --parse      → сваля HTML + парсва в Parsed_files/
-  py run_article.py <URL> --ai         → сваля HTML + генерира JSON през Anthropic в AI_files/
-  py run_article.py <URL> --parse --ai → сваля HTML + парсва + AI JSON
+Usage:
+  py run_article.py <URL>              → only fetch HTML to HTML_files/
+  py run_article.py <URL> --parse      → fetch HTML + parse to Parsed_files/
+  py run_article.py <URL> --ai         → fetch HTML + generate JSON via Anthropic to AI_files/
+  py run_article.py <URL> --parse --ai → fetch + parse + AI JSON
 """
 
 import argparse
@@ -30,60 +30,60 @@ def url_to_slug(url: str) -> str:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Сваля HTML от статия по URL (doğrulukpayi.com); с --parse парсва в JSON, с --ai генерира JSON през Anthropic API."
+        description="Fetch article HTML by URL (doğrulukpayi.com); with --parse run parser to JSON, with --ai generate JSON via Anthropic API."
     )
-    parser.add_argument("url", help="Пълен URL на статията (напр. https://www.dogrulukpayi.com/dogrulama/...)")
-    parser.add_argument("--parse", "-p", action="store_true", help="След fetch: парсвай HTML в JSON (Parsed_files/)")
-    parser.add_argument("--ai", "-a", action="store_true", help="След fetch: генерирай JSON през Anthropic API (AI_files/)")
+    parser.add_argument("url", help="Full article URL (e.g. https://www.dogrulukpayi.com/dogrulama/...)")
+    parser.add_argument("--parse", "-p", action="store_true", help="After fetch: parse HTML to JSON (Parsed_files/)")
+    parser.add_argument("--ai", "-a", action="store_true", help="After fetch: generate JSON via Anthropic API (AI_files/)")
     args = parser.parse_args()
 
     url = args.url.strip()
     if not url.startswith("http"):
-        print("Укажи пълен URL (https://...)", file=sys.stderr)
+        print("Provide a full URL (https://...)", file=sys.stderr)
         sys.exit(1)
 
-    print("Свалям HTML...")
+    print("Fetching HTML...")
     ret = subprocess.run(
         [sys.executable, str(SITE_DIR / "fetch_html.py"), url],
         cwd=str(SITE_DIR),
         capture_output=False,
     )
     if ret.returncode != 0:
-        print("Грешка при сваляне на HTML.", file=sys.stderr)
+        print("Error fetching HTML.", file=sys.stderr)
         sys.exit(ret.returncode)
 
     slug = url_to_slug(url)
     html_path = HTML_FILES / f"{slug}.html"
     if not html_path.exists():
-        print(f"Очакван файл липсва: {html_path}", file=sys.stderr)
+        print(f"Expected file missing: {html_path}", file=sys.stderr)
         sys.exit(1)
-    print(f"Записано: {html_path}\n")
+    print(f"Written: {html_path}\n")
 
     if args.parse:
-        print("Парсвам в JSON (Parsed_files/)...")
+        print("Parsing to JSON (Parsed_files/)...")
         ret = subprocess.run(
             [sys.executable, str(SITE_DIR / "parser.py"), str(html_path)],
             cwd=str(SITE_DIR),
             capture_output=False,
         )
         if ret.returncode != 0:
-            print("Грешка при парсване.", file=sys.stderr)
+            print("Error parsing.", file=sys.stderr)
             sys.exit(ret.returncode)
         print()
 
     if args.ai:
-        print("Генерирам JSON през Anthropic API (AI_files/)...")
+        print("Generating JSON via Anthropic API (AI_files/)...")
         ret = subprocess.run(
             [sys.executable, str(SITE_DIR / "ai_extract.py"), str(html_path)],
             cwd=str(SITE_DIR),
             capture_output=False,
         )
         if ret.returncode != 0:
-            print("Грешка при AI извличане.", file=sys.stderr)
+            print("Error during AI extraction.", file=sys.stderr)
             sys.exit(ret.returncode)
         print()
 
-    print("Готово.")
+    print("Done.")
 
 
 if __name__ == "__main__":

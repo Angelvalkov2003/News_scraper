@@ -1,7 +1,7 @@
 """
-Сваля HTML на статии от dogrulukpayi.com и записва в HTML_files/ само съдържанието на новината.
-Приоритет: section.r-section.r-section-withcard; ако липсва – body след съкращаване.
-Премахва: script, style, link, noscript, SVG извън figure, style/data-* атрибути, съдържание след LogoCheck.
+Fetch article HTML from dogrulukpayi.com and save to HTML_files/ only the article content.
+Priority: section.r-section.r-section-withcard; if missing – body after trimming.
+Removes: script, style, link, noscript, SVG outside figure, style/data-* attributes, content after LogoCheck.
 """
 
 import json
@@ -44,7 +44,7 @@ def _build_minimal_head(soup: BeautifulSoup) -> str:
     author_meta = head.find("meta", attrs={"name": "author"})
     if author_meta and author_meta.get("content"):
         parts.append(str(author_meta))
-    # datePublished/dateModified от JSON-LD ако липсват в meta (често при doğrulukpayi)
+    # datePublished/dateModified from JSON-LD if missing in meta (common for doğrulukpayi)
     if not any("datePublished" in p or "article:published_time" in p for p in parts):
         for script in head.find_all("script", type=re.compile(r"application/ld\+json")):
             try:
@@ -78,7 +78,7 @@ def _build_minimal_head(soup: BeautifulSoup) -> str:
 
 
 def _find_section_article(soup: BeautifulSoup):
-    """Намира section с класове r-section и r-section-withcard."""
+    """Find section with classes r-section and r-section-withcard."""
     for section in soup.find_all("section"):
         c = section.get("class")
         if not c:
@@ -94,7 +94,7 @@ def _find_section_article(soup: BeautifulSoup):
 
 
 def _cut_at_logo_check(container: BeautifulSoup) -> None:
-    """Премахва path.LogoCheck и всичко след него в контейнера."""
+    """Remove path.LogoCheck and everything after it in the container."""
     path_el = container.find("path", attrs={"data-name": "LogoCheck"})
     if not path_el:
         path_el = container.find("path", class_=lambda c: c and "LogoCheck" in (c if isinstance(c, str) else " ".join(c)))
@@ -112,10 +112,10 @@ def _cut_at_logo_check(container: BeautifulSoup) -> None:
 
 def _slim_content(container: BeautifulSoup) -> None:
     """
-    Премахва излишно съдържание, за да намали размера и да остави само статията.
+    Remove redundant content to reduce size and keep only the article.
     - script, style, link, noscript
-    - SVG извън figure (иконки/лого)
-    - атрибути style и data-* върху всички тагове
+    - SVG outside figure (icons/logo)
+    - style and data-* attributes on all tags
     """
     for tag in container.find_all("script"):
         tag.decompose()
@@ -125,12 +125,12 @@ def _slim_content(container: BeautifulSoup) -> None:
         tag.decompose()
     for tag in container.find_all("noscript"):
         tag.decompose()
-    # SVG извън figure (иконки, лого) – премахваме; img вътре в figure остава
+    # SVG outside figure (icons, logo) – remove; img inside figure stays
     for tag in list(container.find_all("svg")):
         if tag.find_parent("figure"):
             continue
         tag.decompose()
-    # Премахваме style и data-* атрибути за по-кратък HTML
+    # Remove style and data-* attributes for shorter HTML
     for tag in container.find_all(True):
         if tag.has_attr("style"):
             del tag["style"]
@@ -141,8 +141,8 @@ def _slim_content(container: BeautifulSoup) -> None:
 
 def extract_article_only(html: str) -> str:
     """
-    Взема съдържанието на статията: section.r-section (и withcard ако има) или body.
-    Прилага _cut_at_logo_check и _slim_content. Head: само нужните meta.
+    Extract article content: section.r-section (and withcard if present) or body.
+    Applies _cut_at_logo_check and _slim_content. Head: only required meta.
     """
     soup = BeautifulSoup(html, "html.parser")
     section = _find_section_article(soup)
@@ -159,13 +159,13 @@ def extract_article_only(html: str) -> str:
             + "</section></body></html>"
         )
 
-    # Fallback: няма section.r-section – връщаме оригиналния HTML непроменен (както преди)
+    # Fallback: no section.r-section – return original HTML unchanged
     return html
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Употреба: python fetch_html.py <URL> [URL ...]", file=sys.stderr)
+        print("Usage: python fetch_html.py <URL> [URL ...]", file=sys.stderr)
         sys.exit(1)
     HTML_FILES.mkdir(parents=True, exist_ok=True)
     session = requests.Session()
@@ -182,9 +182,9 @@ def main():
             slug = url_to_slug(url)
             path = HTML_FILES / f"{slug}.html"
             path.write_text(html_clean, encoding="utf-8")
-            print(f"Записано: {path}")
+            print(f"Written: {path}")
         except requests.RequestException as e:
-            print(f"Грешка {url}: {e}", file=sys.stderr)
+            print(f"Error {url}: {e}", file=sys.stderr)
         if len(sys.argv) > 2:
             time.sleep(1)
 
