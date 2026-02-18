@@ -89,14 +89,22 @@ def _parse_metadata(soup: BeautifulSoup, base_url: str) -> dict:
         if pt and len(pt) >= 14:
             document_date = f"{pt[:4]}-{pt[4:6]}-{pt[6:8]}T{pt[8:10]}:{pt[10:12]}:{pt[12:14]}:00+03:00"
     author_raw = _get_meta_content(soup, "articleAuthor")
-    authors = [{"name": author_raw.strip(), "url": None}] if author_raw else None
+    author_url = None
     section = _get_meta_content(soup, "articleSection")
     categories = [{"name": section.strip(), "url": None}] if section else None
     kw = _get_meta_content(soup, "keywords")
     tags = [{"name": t.strip(), "url": None} for t in kw.split(",") if t.strip()] if kw else None
 
-    # Enrich from contentdetail: categories from .cats a, tags from .tags a (with URLs)
     content = soup.find("div", class_=re.compile(r"contentdetail")) or soup.find("article") or soup.find("main")
+    if content:
+        # Author profile URL: first link to /profil/... in content (e.g. .aplist or .pitem)
+        author_link = content.find("a", href=re.compile(r"^/profil/"))
+        if author_link and author_link.get("href"):
+            author_url = _resolve_url(author_link["href"], base_url)
+            if not author_raw:
+                author_raw = (author_link.get_text(strip=True) or "").strip()
+    authors = [{"name": (author_raw or "").strip() or None, "url": author_url}] if (author_raw or author_url) else None
+
     if content:
         cats_el = content.find(class_=re.compile(r"cats"))
         if cats_el:
@@ -109,12 +117,29 @@ def _parse_metadata(soup: BeautifulSoup, base_url: str) -> dict:
             if tag_links:
                 tags = [{"name": (lambda t: t[1:].strip() if t.startswith("#") else t)((a.get_text(strip=True) or "").strip()), "url": _resolve_url(a["href"], base_url)} for a in tag_links]
 
+    # Title: og:title / meta title, fallback to first h1 in content
+    title = _get_meta_content(soup, "og:title", "property") or _get_meta_content(soup, "title")
+    if not title and content:
+        h1 = content.find("h1")
+        if h1:
+            title = (h1.get_text(strip=True) or "").strip() or None
+
     return {
+        "title": title or None,
         "document_date": document_date or None,
         "authors": authors,
         "categories": categories,
         "tags": tags,
     }
+
+
+def _is_inside_skip_block(tag) -> bool:
+    """Пропускаме: авторски блок (aplist, pitem, person-image), дата (page-info), „Yazarın Son Yazıları“, тагове (.tags)."""
+    skip_classes = ("aplist", "pitem", "person-image", "page-info", "latest-articles", "tags")
+    parent = tag.find_parent(class_=lambda c: c and any(
+        sc in (c if isinstance(c, str) else " ".join(c)) for sc in skip_classes
+    ))
+    return parent is not None
 
 
 def _parse_components(soup: BeautifulSoup, base_url: str) -> list[dict]:
@@ -124,6 +149,10 @@ def _parse_components(soup: BeautifulSoup, base_url: str) -> list[dict]:
     components = []
     for tag in content.find_all(["h1", "h2", "h3", "h4", "h5", "h6", "p", "img", "blockquote", "ul", "ol", "table", "hr"]):
         if tag.find_parent(["li", "td", "th", "blockquote"]):
+            continue
+        if _is_inside_skip_block(tag):
+            continue
+        if tag.name == "img" and re.search(r"yazar-profil", tag.get("src") or "", re.I):
             continue
         if tag.name in ("h1", "h2", "h3", "h4", "h5", "h6"):
             text = _html_to_markdown_text(tag)
