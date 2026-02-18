@@ -1,0 +1,105 @@
+{
+  "metadata": {
+    "document_date": "2026-02-10T16:31:51+03:00",
+    "authors": [
+      {
+        "name": "Anadolu Ajansı",
+        "url": null
+      },
+      {
+        "name": "MESUT ŞAHİN",
+        "url": null
+      }
+    ],
+    "categories": [
+      {
+        "name": "Ekonomi",
+        "url": "https://www.turkiyegazetesi.com.tr/ekonomi"
+      }
+    ],
+    "tags": null
+  },
+  "components": {
+    "components": [
+      {
+        "type": "video",
+        "properties": {
+          "url": "https://v.turkiyegazetesi.com.tr/videos/2026/2/10/ne-hamsi-ne-de-istavrit-iste-tezgahlarin-en-ucuz-baligi-kilosu-75-lira__20260210165614971.mp4",
+          "thumbnail_image_url": "https://i.turkiyegazetesi.com.tr/images/2026/2/10/ne-hamsi-ne-de-istavrit-iste-tezgahlarin-en-ucuz-baligi-kilosu-75-lira-1769924_20260210163351.jpg"
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "Rize'de balıkçı tezgahlarında en ucuz balık tirsi oldu. Kentte tirsinin kilosu 75 liradan satılırken, istavrit ve hamsi ise 100 liradan alıcı buluyor.",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Rize'de vatandaşlar balıkçı tezgahlarında en çok istavriti tercih etti. ***Kentteki balıkçı tezgahlarında tirsi 75, istavrit, hamsi ve tarakçı 100, kefal 150, mezgit 200, Karadeniz somonu 300, çupra 500 ve sarganın kilogramı ise 600 liradan satışa sunuldu.***"
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "\"İSTAVRİT ÇOK GÜZEL, HER GÜN ÇIKIYOR\"",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Balıkçı Soner Birinci, vatandaşların mevsim dolayısıyla en fazla avlanan istavrite ilgi gösterdiğini söyledi. İstavritin kilogramı 100 liradan sattıklarını belirten Birinci, \"***İstavrit çok güzel bir balık, her gün çıkıyor***.\" dedi."
+        }
+      },
+      {
+        "type": "image",
+        "properties": {
+          "url": "https://i.turkiyegazetesi.com.tr/images/2026/2/10/ne-hamsi-ne-de-istavrit-iste-tezgahlarin-en-ucuz-baligi-kilosu-75-lira-1769924_202602101633_20260210163351_1.webp",
+          "description": "Ne hamsi ne de istavrit! İşte tezgahların en ucuz balığı: Kilosu 75 lira",
+          "caption": "Ne hamsi ne de istavrit! İşte tezgahların en ucuz balığı: Kilosu 75 lira"
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "\"BEREKETLİ BİR SEZON GEÇİRDİK\"",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Birinci, mezgite de talep olduğunu ifade ederek, ***\"Vatandaş hamsiden sonra onu soruyor. Sargan var, denizin en güzel balığı, proteini çok. Somon balığı var. Vatandaşımız balığa doydu, balıkçılar olarak bereketli bir sezon geçirdik.***\" diye konuştu."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "VATANDAŞLAR BALIK FİYATLARINDAN MEMNUN",
+          "level": 4
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Balıkçı Ali Fuat Adıgüzel ise yavaş yavaş balık sezonunun sonuna gelindiğini, fiyatların uygun olduğunu dile getirdi."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "İstavrit bolluğu yaşandığını belirten Adıgüzel, genellikle en fazla hamsi ve istavrit sattıklarını kaydetti."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Müşterilerden Mehmet Ziya Türüt de istavritin lezzetli bir balık olduğunu söyledi."
+        }
+      }
+    ]
+  }
+}

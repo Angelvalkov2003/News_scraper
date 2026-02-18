@@ -30,3 +30,15 @@ python ai_extract.py HTML_files/kultur-sanat-ajandasi-691769.html
 ```
 
 За останалите сайтове (`turkiyegazetesi.com`, `bbc.com`, `dogrulukpayi.com`) fetch и parser са шаблон – адаптирай селекторите и URL логиката за всеки домейн. AI скриптът е готов за ползване.
+
+## Една команда за turkiyegazetesi.com
+
+От папката `turkiyegazetesi.com` можеш да подадеш само линк; с флагове се добавят парсване и/или AI JSON:
+
+```bash
+cd turkiyegazetesi.com
+py run_article.py "https://www.turkiyegazetesi.com.tr/ekonomi/..."
+py run_article.py "https://..." --parse          # + парсване в Parsed_files/
+py run_article.py "https://..." --ai             # + JSON през Anthropic в AI_files/
+py run_article.py "https://..." --parse --ai     # fetch + парсване + AI
+```

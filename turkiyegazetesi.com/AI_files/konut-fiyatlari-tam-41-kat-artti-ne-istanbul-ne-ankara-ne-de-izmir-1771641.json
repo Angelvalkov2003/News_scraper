@@ -1,0 +1,244 @@
+{
+  "metadata": {
+    "document_date": "2026-02-18T11:08:39+03:00",
+    "authors": [
+      {
+        "name": "Türkiye Gazetesi"
+      },
+      {
+        "name": "ÖMER FARUK BİNGÖL"
+      }
+    ],
+    "categories": [
+      {
+        "name": "Ekonomi",
+        "url": "https://www.turkiyegazetesi.com.tr/ekonomi"
+      }
+    ]
+  },
+  "components": {
+    "components": [
+      {
+        "type": "image",
+        "properties": {
+          "url": "https://i.turkiyegazetesi.com.tr/images/2026/2/18/konut-fiyatlari-tam-41-kat-artti-ne-istanbul-ne-ankara-ne-de-izmir-1771641_20260218111039.jpg",
+          "description": "Konut fiyatları tam 41 kat arttı! Ne İstanbul ne Ankara ne de İzmir…"
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "Merkez Bankası tarafından açıklanan verilere göre son 11 yıllık dönemde Türkiye'de ortalama konut fiyatı 25 kat arttı. İller bazında bakıldığında ise çok farklı bir tablo ortaya çıktı. 2015-2025 döneminde Türkiye'de konut fiyatlarının en çok artığı ilk 15 il arasında 3 büyükşehir bulunmuyor. Zirvede ise 41 kat fiyat artışıyla sürpriz bir il yer aldı.",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**TÜRKİYE GAZETESİ/Ö. Faruk Bingöl-** Merkez Bankası tarafından açıklanan verilere göre Konut Fiyat Endeksi (KFE) Ocak 2026'da aylık bazda %3,7 ve yıllık olarak %27,7 arttı. Son 1 yıllık enflasyon dikkate alındığında, konut fiyatlarında yıllık bazda reel düşüş %-2,3 olarak gerçekleşti."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Geçen yıl konut satışları 1,7 milyon adede yaklaşarak tüm zamanların rekor seviyesine ulaşmıştı. BDDK tarafından yakın zamanda ilk konutunu alacaklara getirilen kolaylıklar da dikkate alındığında, konut talebinin ve fiyatların bu yıl da artması bekleniyor."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**11 YILDA 25 KAT ARTIŞ**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "TCMB tarafından açıklanan veriler, son 11 yıllık dönemde Türkiye'de ortalama konut fiyatlarının 25 kat arttığını da ortaya koydu. İller bazında bakıldığında ise çok farklı bir tablo ortaya çıktı."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "2015-2025 döneminde Türkiye'de konut fiyatlarının en çok artığı ilk 15 il ve Ocak 2026 metrekare satış fiyatları şöyle sıralandı:"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**1-Kırklareli: 41,30 Kat (33.333 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**2-Edirne: 39,81 Kat (37.186 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**3-Aydın: 39,59 Kat (45.331 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**4-Ordu: 39,36 Kat (33.605 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**5-Çanakkale: 38,73 Kat (48.794 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**6-Muğla: 38,37 Kat (62.991 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**7-Tekirdağ: 36,35 Kat (29.421 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**8-Manisa: 35,79 Kat (34.735 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**9-Balıkesir: 35,34 Kat (42.264 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**10-Mersin: 34,89 Kat (32.252 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**11-Antalya: 33,34 Kat (48.274 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**12-Samsun: 33,27 Kat (33.778 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**13-Zonguldak: 32,64 Kat (36.475 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**14-Diyarbakır: 32,44 Kat (32.035 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**15-Sakarya-Kocaeli: 32,35 Kat-32,31 Kat (32.342 TL/m2-36.988 TL/m2)**"
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "*(Not: Metrekare fiyatları Ocak 2026 dönemine ait olup, Endeksa verilerini yansıtmaktadır.)*"
+        }
+      },
+      {
+        "type": "image",
+        "properties": {
+          "url": "https://i.turkiyegazetesi.com.tr/images/2026/2/18/konut-fiyatlari-tam-41-kat-artti-ne-istanbul-ne-ankara-ne-de-izmir-1771641_202602181110_20260218111040_1.jpg",
+          "description": "Konut fiyatları tam 41 kat arttı! Ne İstanbul ne Ankara ne de İzmir…",
+          "caption": "Konut fiyatları tam 41 kat arttı! Ne İstanbul ne Ankara ne de İzmir…"
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "TRAKYA ZİRVEDE",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Marmara Bölgesinin Trakya kesiminde yer alan Kırklareli, listenin zirvesinde yer alıyor. Edirne ile birlikte bu 2 ildeki artış, Türkiye ortalamasının üzerinde gerçekleşiyor. İstanbul'a yakın konumda bulunan bu illerdeki fiyatlar; mega kentin \"ikame\" adresleri olması, *(özellikle Tekirdağ'da)* sanayi yatırımları ve Avrupa'ya açılan kapı konumları ile yükselişe geçti."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "KIYILAR VE TURİZM",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Aydın, Çanakkale, Muğla, Balıkesir ve Antalya gibi turizm yönünden de gelişen iller, özellikle pandemi sonrasında da \"izole hayat\" tercihleri ile hızla öne çıktılar. Artan taleple birlikte bu iller de 11 yıllık getirilerde ilk sıralarda yer aldı."
+        }
+      },
+      {
+        "type": "image",
+        "properties": {
+          "url": "https://i.turkiyegazetesi.com.tr/images/2026/2/18/konut-fiyatlari-tam-41-kat-artti-ne-istanbul-ne-ankara-ne-de-izmir-1771641_202602181110_20260218111041_2.jpg",
+          "description": "Konut fiyatları tam 41 kat arttı! Ne İstanbul ne Ankara ne de İzmir…",
+          "caption": "Konut fiyatları tam 41 kat arttı! Ne İstanbul ne Ankara ne de İzmir…"
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "3 BÜYÜKŞEHİRDE DURUM",
+          "level": 4
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "*Gayrimenkul yatırımcısının en çok tercih ettiği İstanbul (21,80 kat), Ankara (28,22 kat) ve İzmir'de (28,99 kat) fiyat artışları, şaşırtıcı bir şekilde listede ilk 15 il arasına giremedi*. Ancak Ankara ve İzmir, ülke ortalamasının üzerinde prim yaptı."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "SAKARYA VE KOCAELİ",
+          "level": 4
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "İstanbul'da fiyat artışlarının diğer illere göre daha sınırlı kalması, zaten pahalı olan fiyatların doygunluk seviyesine yakın olmasıyla açıklanıyor. Öte yandan Sakarya ve Kocaeli gibi şehirlere kayan talep, bu illerin daha fazla prim yapmasını da beraberinde getiriyor."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "CAZİBE MERKEZLERİ",
+          "level": 4
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Karadeniz'de Zonguldak, Samsun ve Ordu, Akdeniz'de Mersin ve Güneydoğu Anadolu'da Diyarbakır da \"cazibe merkezleri\" olarak 2015-2025 yılları arasında \"en çok fiyat artışı yaşanan\" iller arasında yer aldı."
+        }
+      }
+    ]
+  }
+}

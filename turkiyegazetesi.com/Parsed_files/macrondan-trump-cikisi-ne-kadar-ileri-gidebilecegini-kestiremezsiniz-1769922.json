@@ -1,0 +1,151 @@
+{
+  "metadata": {
+    "document_date": "2026-02-10T16:19:29+03:00",
+    "authors": [
+      {
+        "name": "DIŞ HABERLER SERVİSİ",
+        "url": null
+      },
+      {
+        "name": "MÜZEYYEN BIYIK",
+        "url": null
+      }
+    ],
+    "categories": [
+      {
+        "name": "Dünya",
+        "url": "https://www.turkiyegazetesi.com.tr/dunya"
+      }
+    ],
+    "tags": null
+  },
+  "components": {
+    "components": [
+      {
+        "type": "video",
+        "properties": {
+          "url": "https://v.turkiyegazetesi.com.tr/videos/2026/2/10/macrondan-trump-cikisi-ne-kadar-ileri-gidebilecegini-kestiremezsiniz__20260210170915856.mp4",
+          "thumbnail_image_url": "https://i.turkiyegazetesi.com.tr/images/2026/2/10/macrondan-trump-cikisi-ne-kadar-ileri-gidebilecegini-kestiremezsiniz-1769922_20260210162129.jpg"
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "Fransa Cumhurbaşkanı Emmanuel Macron, ABD’nin son dönemde izlediği politikalar üzerinden Avrupa’ya uyarıda bulundu",
+          "level": 2
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Fransa Cumhurbaşkanı Emmanuel Macron, ABD’nin son dönemde izlediği politikalar üzerinden Avrupa’ya açık uyarı yaptı."
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Macron, ABD’nin gümrük vergileri ve Grönland’a yönelik taleplerine değinerek, Washington’un sınır tanımayan bir çizgiye yöneldiğini söyledi. Avrupa’nın artık kendi ayakları üzerinde durması gerektiğini iletti."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "\"ABD AÇIK BİÇİMDE AVRUPA KARŞITI\"",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "***Macron, İngiliz ve Alman basınına yaptığı değerlendirmelerde mevcut ABD yönetiminin Avrupa Birliği’ne yaklaşımını eleştirdi. ABD’nin AB’ye küçümseyici davrandığını söyleyen Macron, Washington’un Avrupa’nın parçalanmasını arzuladığını dile getirdi. Avrupa ülkelerinin bugüne kadar izlediği stratejinin sonuç vermediğini ifade etti.***"
+        }
+      },
+      {
+        "type": "image",
+        "properties": {
+          "url": "https://i.turkiyegazetesi.com.tr/images/2026/2/10/macrondan-trump-cikisi-ne-kadar-ileri-gidebilecegini-kestiremezsiniz-1769922_202602101705_20260210170551_1.jpg",
+          "description": "Macron’dan Trump çıkışı: \"Ne kadar ileri gidebileceğini kestiremezsiniz\"",
+          "caption": "Macron’dan Trump çıkışı: \"Ne kadar ileri gidebileceğini kestiremezsiniz\""
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "\"BOYUN EĞMEK ÇÖZÜM DEĞİL\"",
+          "level": 3
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "ABD ile ilişkilerde geri adım atmanın ya da yalnızca anlaşma arayışına girmenin etkisiz kaldığını söyleyen Macron, bu yöntemin aylardır denendiğini ancak işe yaramadığını belirtti. Avrupa’nın daha kararlı bir duruş sergilemesi gerektiğini savundu."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "RUSYA MESAJI: \"KOMŞUMUZ OLARAK KALACAK\"",
+          "level": 4
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "**Macron, Rusya ile ilişkiler konusuna da net bir çerçeve çizdi. Coğrafyanın değişmeyeceğini hatırlatan Fransız lider, “Rusya’yı sevsek de sevmesek de gelecekte de komşumuz olacak” dedi. Bu nedenle Avrupalı ülkelerin Moskova ile diyaloğu yeniden kurması gerektiğini söyledi.**"
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "ARALIK AYI İŞARET EDİLDİ",
+          "level": 4
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Rusya ile temasların yeniden başlamasına dair takvime de değinen Macron, görüşmelerin Aralık ayı gibi yeniden başlayabileceğini dile getirdi. Bu süreçte ne saf davranılması ne de Ukrayna’ya baskı kurulması gerektiğine değindi."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "ABD’DEN BİTMEYEN TEHDİTLER",
+          "level": 4
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Macron, ABD’nin gümrük vergileri üzerinden baskı kurduğunu, geri adım atıyor gibi göründüğü anlarda bile yeni tehditler ürettiğini söyledi. İlaç ve dijital teknoloji alanlarının sürekli hedefte olduğunu kaydetti. Avrupa’nın bu tablo karşısında uzlaşma arayışına girmemesi gerektiğini dile getirdi."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "ENERJİ VE GÜVENLİKTE ABD BAĞIMLILIĞI",
+          "level": 4
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Avrupa’nın doğal gaz tedarikinin yüzde 60’ının ABD’den geldiğini hatırlatan Macron, bu durumun ciddi bir bağımlığa neden olduğunu söyledi. ABD’nin Avrupa’nın güvenliğini ne ölçüde garanti etmeye devam edeceği konusunda da soru işaretleri olduğunu ifade etti."
+        }
+      },
+      {
+        "type": "heading",
+        "properties": {
+          "text": "\"BEŞ YIL İÇİNDE AVRUPA YOK OLABİLİR\"",
+          "level": 4
+        }
+      },
+      {
+        "type": "paragraph",
+        "properties": {
+          "text": "Macron, açıklamalarının en sert bölümünde Avrupa için zamanın hızla daraldığını söyledi. ABD’nin taleplerinin yalnızca Grönland ile sınırlı olmadığını belirten Fransız lider, \"Hiçbir adım atmazsak, Avrupa beş yıl içinde yok olacak\" sözleriyle uyarıda bulundu."
+        }
+      }
+    ]
+  }
+}
