@@ -134,8 +134,18 @@ def _get_metadata(soup: BeautifulSoup, content_root: Tag, base_url: str) -> dict
                 authors.append({"name": name.strip(), "url": author_url})
 
     categories = None
-    head = soup.find("head")
-    if head:
+    # 1) Prefer category from links to /kategoriler/ (article's real category)
+    for anchor in (soup.find_all("a", href=re.compile(r"^/kategoriler/")) or []):
+        href = anchor.get("href")
+        if not href:
+            continue
+        name = (anchor.get_text(strip=True) or "").strip()
+        if not name:
+            name = (href.rstrip("/").split("/")[-1] or "").replace("-", " ").title()
+        categories = [{"name": name, "url": urljoin(base_url, href)}]
+        break
+    # 2) JSON-LD BreadcrumbList (often generic like "Bülten")
+    if not categories and head:
         for script in head.find_all("script", type=re.compile(r"application/ld\+json")):
             raw = (script.string or "").strip()
             if not raw:
@@ -156,6 +166,7 @@ def _get_metadata(soup: BeautifulSoup, content_root: Tag, base_url: str) -> dict
                 pass
             if categories:
                 break
+    # 3) Links to /dogrulama/, /bulten/, /dogruluk-kontrolu/
     if not categories and content_root:
         cat_links = content_root.find_all("a", href=re.compile(r"^/(dogrulama|bulten|dogruluk-kontrolu)/"))
         if cat_links:
@@ -456,9 +467,17 @@ def _metadata_from_next_content(content: dict, base_url: str) -> dict | None:
         authors.append({"name": name, "url": url})
     categories = None
     for c in content.get("categories") or []:
-        if isinstance(c, dict) and c.get("name"):
-            categories = categories or []
-            categories.append({"name": c["name"].strip(), "url": (c.get("url") or c.get("slug") or "").strip() or None})
+        if not isinstance(c, dict):
+            continue
+        name = (c.get("title") or c.get("name") or "").strip()
+        if not name:
+            continue
+        slug = (c.get("slug") or "").strip()
+        url = (c.get("url") or "").strip()
+        if not url and slug:
+            url = (base_url.rstrip("/") + "/kategoriler/" + slug).strip()
+        categories = categories or []
+        categories.append({"name": name, "url": url or None})
     return {
         "document_date": doc_date,
         "authors": authors if authors else None,
@@ -562,6 +581,20 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
         content_root = soup.find("section", class_=lambda c: c and "r-section" in (c if isinstance(c, str) else " ".join(c)))
 
     metadata = _get_metadata(soup, content_root, base_url)
+    # Prefer date and categories from __NEXT_DATA__.content when present (per-article values)
+    next_props = _get_next_data_content(html_str)
+    next_content = (next_props or {}).get("content") if isinstance(next_props, dict) else None
+    if next_content and isinstance(next_content, dict):
+        meta_next = _metadata_from_next_content(next_content, base_url)
+        if meta_next:
+            if meta_next.get("document_date"):
+                metadata["document_date"] = meta_next["document_date"]
+            if meta_next.get("categories"):
+                metadata["categories"] = meta_next["categories"]
+            if meta_next.get("title") and not metadata.get("title"):
+                metadata["title"] = meta_next["title"]
+            if meta_next.get("authors") and not metadata.get("authors"):
+                metadata["authors"] = meta_next["authors"]
     components_list = []
 
     if content_root:

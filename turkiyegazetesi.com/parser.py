@@ -80,10 +80,12 @@ def _get_metadata(soup: BeautifulSoup, article: Tag, base_url: str) -> dict:
         editor_link = editor_block.find("a")
         if editor_link:
             editor_name = editor_link.get_text(strip=True)
+            editor_url = urljoin(base_url, editor_link.get("href")) if editor_link.get("href") else None
         else:
             editor_name = re.sub(r"Editör\s*:\s*", "", editor_block.get_text(strip=True))
+            editor_url = None
         if editor_name:
-            authors.append({"name": editor_name, "url": None})
+            authors.append({"name": editor_name, "url": editor_url})
 
     # title: og:title, then h1 in article, then <title>
     title = None
