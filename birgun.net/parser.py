@@ -12,16 +12,13 @@ from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
 
-if hasattr(sys.stdout, "reconfigure"):
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
+# Allow importing base package from project root
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-SITE_DIR = Path(__file__).resolve().parent
-ROOT = SITE_DIR.parent
-HTML_FILES = SITE_DIR / "HTML_files"
-PARSED_FILES = SITE_DIR / "Parsed_files"
+from base.base_parser import BaseParser
+
 BASE_URL = "https://www.birgun.net"
 
 
@@ -97,8 +94,10 @@ def _parse_metadata(soup: BeautifulSoup, base_url: str) -> dict:
 
     content = soup.find("div", class_=re.compile(r"contentdetail")) or soup.find("article") or soup.find("main")
     if content:
-        # Author profile URL: first link to /profil/... in content (e.g. .aplist or .pitem)
-        author_link = content.find("a", href=re.compile(r"^/profil/"))
+        # Author profile link: only use links that point to author profile (/profil/ or birgun.net/.../profil/)
+        author_link = content.find("a", href=re.compile(r"^/profil/|profil", re.I))
+        if not author_link:
+            author_link = content.find("a", href=re.compile(r"^https?://[^/]*birgun\.net/profil/", re.I))
         if author_link and author_link.get("href"):
             author_url = _resolve_url(author_link["href"], base_url)
             if not author_raw:
@@ -110,14 +109,19 @@ def _parse_metadata(soup: BeautifulSoup, base_url: str) -> dict:
         if cats_el:
             cat_links = cats_el.find_all("a", href=True)
             if cat_links:
-                categories = [{"name": (a.get_text(strip=True) or ""), "url": _resolve_url(a["href"], base_url)} for a in cat_links]
+                categories = [{"name": (a.get_text(strip=True) or "").strip(), "url": _resolve_url(a["href"], base_url)} for a in cat_links]
         tags_block = content.find(class_=re.compile(r"^tags$"))
         if tags_block:
             tag_links = tags_block.find_all("a", href=True)
             if tag_links:
-                tags = [{"name": (lambda t: t[1:].strip() if t.startswith("#") else t)((a.get_text(strip=True) or "").strip()), "url": _resolve_url(a["href"], base_url)} for a in tag_links]
+                tags = [
+                    {
+                        "name": (lambda t: t[1:].strip() if t.startswith("#") else t)((a.get_text(strip=True) or "").strip()),
+                        "url": _resolve_url(a["href"], base_url),
+                    }
+                    for a in tag_links
+                ]
 
-    # Title: og:title / meta title, fallback to first h1 in content
     title = _get_meta_content(soup, "og:title", "property") or _get_meta_content(soup, "title")
     if not title and content:
         h1 = content.find("h1")
@@ -134,11 +138,11 @@ def _parse_metadata(soup: BeautifulSoup, base_url: str) -> dict:
 
 
 def _is_inside_skip_block(tag) -> bool:
-    """Пропускаме: авторски блок (aplist, pitem, person-image), дата (page-info), „Yazarın Son Yazıları“, тагове (.tags)."""
+    """Skip author block (aplist, pitem, person-image), date (page-info), „Yazarın Son Yazıları“, tags."""
     skip_classes = ("aplist", "pitem", "person-image", "page-info", "latest-articles", "tags")
-    parent = tag.find_parent(class_=lambda c: c and any(
-        sc in (c if isinstance(c, str) else " ".join(c)) for sc in skip_classes
-    ))
+    parent = tag.find_parent(
+        class_=lambda c: c and any(sc in (c if isinstance(c, str) else " ".join(c)) for sc in skip_classes)
+    )
     return parent is not None
 
 
@@ -164,7 +168,11 @@ def _parse_components(soup: BeautifulSoup, base_url: str) -> list[dict]:
                 components.append({"type": "paragraph", "properties": {"text": text}})
         elif tag.name == "img":
             src = tag.get("src") or ""
-            if re.search(r"(icon|logo|x\.png|x_w|facebook|whatsapp|twitter|bluesky|telegram|linkedin|google_news|share|button|abone_banner|/assets/images/)", src, re.I):
+            if re.search(
+                r"(icon|logo|x\.png|x_w|facebook|whatsapp|twitter|bluesky|telegram|linkedin|google_news|share|button|abone_banner|/assets/images/)",
+                src,
+                re.I,
+            ):
                 continue
             url = _resolve_url(src, base_url) if src else None
             if url:
@@ -174,7 +182,9 @@ def _parse_components(soup: BeautifulSoup, base_url: str) -> list[dict]:
                     caption = _html_to_markdown_text(parent.find("figcaption"))
                 pa = tag.find_parent("a")
                 link_url = _resolve_url(pa["href"], base_url) if pa and pa.get("href") else None
-                components.append({"type": "image", "properties": _schema_props(url=url, caption=caption, description=tag.get("alt") or None, link_url=link_url)})
+                components.append(
+                    {"type": "image", "properties": _schema_props(url=url, caption=caption, description=tag.get("alt") or None, link_url=link_url)}
+                )
         elif tag.name == "blockquote":
             text = _html_to_markdown_text(tag)
             if text:
@@ -219,31 +229,15 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     }
 
 
-def main():
-    PARSED_FILES.mkdir(parents=True, exist_ok=True)
-    if len(sys.argv) > 1:
-        paths = [Path(p).resolve() for p in sys.argv[1:]]
-    else:
-        paths = list(HTML_FILES.glob("*.html")) if HTML_FILES.exists() else []
-    if not paths:
-        print("No HTML files. Add paths or run fetch_html.py first.", file=sys.stderr)
-        sys.exit(1)
-    for path in paths:
-        if not path.exists():
-            print(f"Skipping (file missing): {path}", file=sys.stderr)
-            continue
-        raw = path.read_bytes()
-        try:
-            doc = parse_article_html(raw, base_url=BASE_URL)
-        except Exception as e:
-            print(f"Error parsing {path}: {e}", file=sys.stderr)
-            continue
-        out = PARSED_FILES / f"{path.stem}.json"
-        with open(out, "w", encoding="utf-8") as f:
-            json.dump(doc, f, ensure_ascii=False, indent=2)
-        print(f"  {out.name}")
-    print(f"Written to {PARSED_FILES}")
+class BirgunParser(BaseParser):
+    """Birgun.net parser: contentdetail, meta + byline metadata, component extraction."""
+
+    def __init__(self):
+        super().__init__(site_dir=Path(__file__).resolve().parent, base_url=BASE_URL)
+
+    def parse_article_html(self, html_raw: bytes, base_url: str | None = None) -> dict:
+        return parse_article_html(html_raw, base_url=base_url or self.base_url)
 
 
 if __name__ == "__main__":
-    main()
+    BirgunParser().main()

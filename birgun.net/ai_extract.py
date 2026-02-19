@@ -3,126 +3,87 @@ Send article HTML to Claude API and save result to AI_files/. Tries Structured O
 Run from birgun.net folder: python ai_extract.py <file.html> [file2.html ...]
 """
 
-import json
-import os
-import re
 import sys
-import time
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-if hasattr(sys.stdout, "reconfigure"):
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
-
-SITE_DIR = Path(__file__).resolve().parent
-ROOT = SITE_DIR.parent
-HTML_FILES = SITE_DIR / "HTML_files"
-AI_FILES = SITE_DIR / "AI_files"
-
+# Allow importing base package from project root
+ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
-from ai_schema_for_claude import load_and_prepare_schema
+
+from base.base_ai_extractor import BaseAiExtractor
+
+BASE_URL = "https://www.birgun.net"
 
 
-def _extract_json_from_response(text: str) -> str:
-    m = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
-    return m.group(1).strip() if m else text.strip()
+def _resolve_birgun_url(url: str | None) -> str | None:
+    """Convert relative birgun URL to full absolute URL."""
+    if not url or not isinstance(url, str) or not url.strip():
+        return None
+    url = url.strip()
+    if url.startswith("https://"):
+        return url
+    if url.startswith("//"):
+        return "https:" + url
+    if url.startswith("/"):
+        return BASE_URL + url
+    if not url.startswith("http"):
+        return BASE_URL + "/" + url.lstrip("/")
+    return url
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python ai_extract.py <file.html> [file2.html ...]", file=sys.stderr)
-        sys.exit(1)
-    load_dotenv(ROOT / ".env")
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise SystemExit("ANTHROPIC_API_KEY missing in .env (create .env in project root with ANTHROPIC_API_KEY=...)")
-    try:
-        import anthropic
-    except ImportError:
-        raise SystemExit("Install: pip install anthropic")
-    schema = load_and_prepare_schema(ROOT)
-    schema_raw = (ROOT / "scraped_article_json_schema.json").read_text(encoding="utf-8")
-    client = anthropic.Anthropic(api_key=api_key)
-    AI_FILES.mkdir(parents=True, exist_ok=True)
-    max_retries, wait_seconds = 3, 65
-    for html_arg in sys.argv[1:]:
-        html_path = Path(html_arg).resolve()
-        if not html_path.is_absolute() and (SITE_DIR / html_arg).exists():
-            html_path = (SITE_DIR / html_arg).resolve()
-        if not html_path.exists():
-            print(f"Skipping (file missing): {html_path}", file=sys.stderr)
-            continue
-        html_content = html_path.read_text(encoding="utf-8", errors="replace")
-        prompt_short = f"""Extract this birgun.net article HTML into one JSON object. Follow these rules strictly.
+def _build_birgun_prompt(html_content: str) -> str:
+    return f"""Extract this birgun.net article HTML into one JSON object. Follow these rules strictly.
 
 STRICT RULES:
-- Authors: Take ONLY from the HTML (meta, byline). EXACT name. When author has a link, url = FULL absolute URL (https://www.birgun.net/...), never relative. If no link, url: null.
-- Categories: Take ONLY from section links or meta. name = exact link text. url = FULL absolute URL only (https://www.birgun.net/...), never relative paths like /kategori/.... If none, null.
-- Tags: Set ONLY if the article page has tags explicitly shown in a dedicated place (tag section, tag links). If no dedicated tags block, use null. Do not invent tags.
-- Title: Exact headline from the article (h1 or meta), not invented.
-- document_date: ISO 8601 from meta article:published_time or datePublished only.
-- Body text: Copy text EXACTLY from the HTML in the SAME order. One <p> → one paragraph component; one <h1>-<h6> → one heading. Do NOT paraphrase, summarize, or merge paragraphs. Do NOT add sentences that are not in the HTML. Preserve **bold** and *italic* as in source. Skip "related", "recommended", "Sıradaki Haber" and everything after the main story.
+- Authors: Take ONLY from the HTML (meta, byline). EXACT name. When the author has a link (e.g. <a href="/profil/...">), set url to the FULL absolute URL: https://www.birgun.net/profil/author-slug (NEVER relative like /profil/...). If no author link, url: null.
+- Categories: Take ONLY from section/category links or meta. name = exact link text. url MUST be FULL absolute URL: https://www.birgun.net/kategori/guncel-7 — NEVER write only /kategori/guncel-7 or relative path. If no category link, url: null.
+- Tags: Only if the article has a dedicated tag section. For each tag link, url MUST be FULL: https://www.birgun.net/etiket/etiket-slug-123 — NEVER only /etiket/.... If no tag link, url: null.
+- Title: Exact headline (h1 or meta).
+- document_date: ISO 8601 from meta only.
+- Body text: Copy EXACTLY in order; one <p> → one paragraph, one heading → one heading. Do NOT paraphrase. Skip "Sıradaki Haber" and everything after.
 
-Output: metadata + components array in document order.
+URL RULE: Every url field (author, category, tag) must start with https://www.birgun.net/ — never output relative paths like /kategori/... or /etiket/... or /profil/...
 
-Article HTML:
-{html_content}"""
-        prompt_with_schema = f"""Extract this birgun.net article HTML. Return ONE valid JSON conforming to the schema below. Return ONLY JSON.
-
-STRICT: authors = exact names from HTML (meta/article byline); categories = exact names and URLs from section links; do NOT invent. Body: copy paragraph/heading text EXACTLY in order, do NOT paraphrase or mix up text.
-
-JSON Schema:
-{schema_raw}
+Output: metadata + components in document order.
 
 Article HTML:
 {html_content}"""
 
-        text = None
-        for attempt in range(max_retries):
-            try:
-                message = client.messages.create(
-                    model="claude-sonnet-4-5",
-                    max_tokens=8192,
-                    messages=[{"role": "user", "content": prompt_short}],
-                    output_config={"format": {"type": "json_schema", "schema": schema}},
-                )
-                text = (message.content[0].text if message.content else "").strip()
-                break
-            except anthropic.BadRequestError as e:
-                err = str(e).lower()
-                if "output format" in err or "grammar" in err:
-                    message = client.messages.create(
-                        model="claude-sonnet-4-20250514",
-                        max_tokens=8192,
-                        messages=[{"role": "user", "content": prompt_with_schema}],
-                    )
-                    raw = (message.content[0].text if message.content else "").strip()
-                    text = _extract_json_from_response(raw)
-                    break
-                raise
-            except anthropic.RateLimitError as e:
-                if attempt + 1 >= max_retries:
-                    print("Error: rate limit (429). Try again in a minute.", file=sys.stderr)
-                    raise SystemExit(1) from e
-                print(f"Rate limit (429). Waiting {wait_seconds} s...", file=sys.stderr)
-                time.sleep(wait_seconds)
-        if text is None:
-            continue
-        try:
-            data = json.loads(text)
-        except json.JSONDecodeError as e:
-            print(f"Claude returned invalid JSON for {html_path.name}: {e}", file=sys.stderr)
-            continue
-        out_file = AI_FILES / f"{html_path.stem}.json"
-        with open(out_file, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        print(f"Written: {out_file}")
+
+def _metadata_urls_to_absolute(obj):
+    """Recursively ensure all url fields in metadata (authors, categories, tags) are full URLs."""
+    if obj is None:
+        return None
+    if isinstance(obj, list):
+        return [_metadata_urls_to_absolute(x) for x in obj]
+    if isinstance(obj, dict):
+        out = {}
+        for k, v in obj.items():
+            if k == "url" and isinstance(v, str):
+                out[k] = _resolve_birgun_url(v) or v
+            else:
+                out[k] = _metadata_urls_to_absolute(v)
+        return out
+    return obj
+
+
+class BirgunAiExtractor(BaseAiExtractor):
+    """Birgun.net AI extractor: site-specific prompt and fallback."""
+
+    def __init__(self):
+        super().__init__(site_dir=Path(__file__).resolve().parent)
+
+    def build_prompt(self, html_content: str) -> str:
+        return _build_birgun_prompt(html_content)
+
+    def post_process_output(self, data: dict) -> dict:
+        """Ensure all metadata URLs (author, category, tag) are full https://www.birgun.net/... URLs."""
+        if isinstance(data, dict) and "metadata" in data:
+            data = dict(data)
+            data["metadata"] = _metadata_urls_to_absolute(data["metadata"])
+        return data
 
 
 if __name__ == "__main__":
-    main()
+    BirgunAiExtractor().main()

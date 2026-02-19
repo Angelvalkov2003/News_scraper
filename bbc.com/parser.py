@@ -12,15 +12,12 @@ from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
 
-if hasattr(sys.stdout, "reconfigure"):
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-SITE_DIR = Path(__file__).resolve().parent
-HTML_FILES = SITE_DIR / "HTML_files"
-PARSED_FILES = SITE_DIR / "Parsed_files"
+from base.base_parser import BaseParser
+
 BASE_URL = "https://www.bbc.com"
 
 
@@ -300,31 +297,13 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     }
 
 
-def main():
-    PARSED_FILES.mkdir(parents=True, exist_ok=True)
-    if len(sys.argv) > 1:
-        paths = [Path(p).resolve() for p in sys.argv[1:]]
-    else:
-        paths = list(HTML_FILES.glob("*.html")) if HTML_FILES.exists() else []
-    if not paths:
-        print("No HTML files. Add paths or run fetch_html.py first.", file=sys.stderr)
-        sys.exit(1)
-    for path in paths:
-        if not path.exists():
-            print(f"Skipping (file missing): {path}", file=sys.stderr)
-            continue
-        raw = path.read_bytes()
-        try:
-            doc = parse_article_html(raw, base_url=BASE_URL)
-        except Exception as e:
-            print(f"Error parsing {path}: {e}", file=sys.stderr)
-            continue
-        out = PARSED_FILES / f"{path.stem}.json"
-        with open(out, "w", encoding="utf-8") as f:
-            json.dump(doc, f, ensure_ascii=False, indent=2)
-        print(f"  {out.name}")
-    print(f"Written to {PARSED_FILES}")
+class BbcParser(BaseParser):
+    def __init__(self):
+        super().__init__(site_dir=Path(__file__).resolve().parent, base_url=BASE_URL)
+
+    def parse_article_html(self, html_raw: bytes, base_url: str | None = None) -> dict:
+        return parse_article_html(html_raw, base_url=base_url or self.base_url)
 
 
 if __name__ == "__main__":
-    main()
+    BbcParser().main()

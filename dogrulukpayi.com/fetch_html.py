@@ -7,29 +7,19 @@ Removes: script, style, link, noscript, SVG outside figure, style/data-* attribu
 import json
 import re
 import sys
-import time
 from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
 
-if hasattr(sys.stdout, "reconfigure"):
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-SITE_DIR = Path(__file__).resolve().parent
-HTML_FILES = SITE_DIR / "HTML_files"
-UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+from base.base_fetcher import BaseHtmlFetcher
 
 _META_NAMES = ("datePublished", "dateModified", "dateCreated", "articleAuthor", "articleSection")
 _META_PROPERTIES = ("article:published_time", "article:modified_time", "article:author", "article:section")
-
-
-def url_to_slug(url: str) -> str:
-    path = url.strip().rstrip("/").split("/")[-1] or "page"
-    return path if not path.endswith(".html") else path[:-5]
 
 
 def _build_minimal_head(soup: BeautifulSoup) -> str:
@@ -44,7 +34,6 @@ def _build_minimal_head(soup: BeautifulSoup) -> str:
     author_meta = head.find("meta", attrs={"name": "author"})
     if author_meta and author_meta.get("content"):
         parts.append(str(author_meta))
-    # datePublished/dateModified from JSON-LD if missing in meta (common for doğrulukpayi)
     if not any("datePublished" in p or "article:published_time" in p for p in parts):
         for script in head.find_all("script", type=re.compile(r"application/ld\+json")):
             try:
@@ -78,7 +67,6 @@ def _build_minimal_head(soup: BeautifulSoup) -> str:
 
 
 def _find_section_article(soup: BeautifulSoup):
-    """Find section with classes r-section and r-section-withcard."""
     for section in soup.find_all("section"):
         c = section.get("class")
         if not c:
@@ -94,7 +82,6 @@ def _find_section_article(soup: BeautifulSoup):
 
 
 def _cut_at_logo_check(container: BeautifulSoup) -> None:
-    """Remove path.LogoCheck and everything after it in the container."""
     path_el = container.find("path", attrs={"data-name": "LogoCheck"})
     if not path_el:
         path_el = container.find("path", class_=lambda c: c and "LogoCheck" in (c if isinstance(c, str) else " ".join(c)))
@@ -111,12 +98,6 @@ def _cut_at_logo_check(container: BeautifulSoup) -> None:
 
 
 def _slim_content(container: BeautifulSoup) -> None:
-    """
-    Remove redundant content to reduce size and keep only the article.
-    - script, style, link, noscript
-    - SVG outside figure (icons/logo)
-    - style and data-* attributes on all tags
-    """
     for tag in container.find_all("script"):
         tag.decompose()
     for tag in container.find_all("style"):
@@ -125,12 +106,10 @@ def _slim_content(container: BeautifulSoup) -> None:
         tag.decompose()
     for tag in container.find_all("noscript"):
         tag.decompose()
-    # SVG outside figure (icons, logo) – remove; img inside figure stays
     for tag in list(container.find_all("svg")):
         if tag.find_parent("figure"):
             continue
         tag.decompose()
-    # Remove style and data-* attributes for shorter HTML
     for tag in container.find_all(True):
         if tag.has_attr("style"):
             del tag["style"]
@@ -139,11 +118,7 @@ def _slim_content(container: BeautifulSoup) -> None:
             del tag[k]
 
 
-def extract_article_only(html: str) -> str:
-    """
-    Extract article content: section.r-section (and withcard if present) or body.
-    Applies _cut_at_logo_check and _slim_content. Head: only required meta.
-    """
+def _extract_article_only_dogrulukpayi(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
     section = _find_section_article(soup)
     if section:
@@ -158,36 +133,16 @@ def extract_article_only(html: str) -> str:
             + section_html
             + "</section></body></html>"
         )
-
-    # Fallback: no section.r-section – return original HTML unchanged
     return html
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python fetch_html.py <URL> [URL ...]", file=sys.stderr)
-        sys.exit(1)
-    HTML_FILES.mkdir(parents=True, exist_ok=True)
-    session = requests.Session()
-    session.headers["User-Agent"] = UA
-    for url in sys.argv[1:]:
-        url = url.strip()
-        if not url:
-            continue
-        try:
-            r = session.get(url, timeout=30)
-            r.raise_for_status()
-            r.encoding = r.encoding or "utf-8"
-            html_clean = extract_article_only(r.text)
-            slug = url_to_slug(url)
-            path = HTML_FILES / f"{slug}.html"
-            path.write_text(html_clean, encoding="utf-8")
-            print(f"Written: {path}")
-        except requests.RequestException as e:
-            print(f"Error {url}: {e}", file=sys.stderr)
-        if len(sys.argv) > 2:
-            time.sleep(1)
+class DogrulukpayiHtmlFetcher(BaseHtmlFetcher):
+    def __init__(self):
+        super().__init__(site_dir=Path(__file__).resolve().parent)
+
+    def extract_article_only(self, html: str) -> str:
+        return _extract_article_only_dogrulukpayi(html)
 
 
 if __name__ == "__main__":
-    main()
+    DogrulukpayiHtmlFetcher().main()
