@@ -7,28 +7,24 @@ import sys
 import time
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 SITE_DIR = Path(__file__).resolve().parent
 ROOT = SITE_DIR.parent
 AI_FILES = SITE_DIR / "AI_files"
-
-
-def load_env():
-    for line in (ROOT / ".env").read_text(encoding="utf-8").strip().splitlines():
-        line = line.strip()
-        if "=" in line and not line.startswith("#"):
-            key, _, value = line.partition("=")
-            if key.strip() and value.strip():
-                os.environ[key.strip()] = value.strip().strip('"').strip("'")
 
 
 def main():
     if len(sys.argv) < 2:
         print("Usage: python ai_extract.py <file.html> [...]", file=sys.stderr)
         sys.exit(1)
-    load_env()
-    schema_content = (ROOT / "scraped_article_json_schema.json").read_text(encoding="utf-8")
+    load_dotenv(ROOT / ".env")
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise SystemExit("ANTHROPIC_API_KEY missing in .env (create .env in project root with ANTHROPIC_API_KEY=...)")
     import anthropic
-    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    schema_content = (ROOT / "scraped_article_json_schema.json").read_text(encoding="utf-8")
+    client = anthropic.Anthropic(api_key=api_key)
     AI_FILES.mkdir(parents=True, exist_ok=True)
     for html_arg in sys.argv[1:]:
         html_path = Path(html_arg).resolve()

@@ -144,6 +144,27 @@ def _extract_bbc_tags(soup: BeautifulSoup, base_url: str) -> list[dict] | None:
     return None
 
 
+def _extract_bbc_author_from_page(soup: BeautifulSoup) -> str | None:
+    """Extract author from BBC page: script config.authors (e.g. 'BBC Türkçe') or JSON-LD publisher name."""
+    for script in soup.find_all("script"):
+        raw = script.string or ""
+        if not raw or "authors" not in raw:
+            continue
+        # var config = {..., "authors":"BBC Türkçe", ...};
+        m = re.search(r'"authors"\s*:\s*"((?:[^"\\]|\\.)*)"', raw)
+        if m:
+            return m.group(1).strip() or None
+        m = re.search(r'"authors"\s*:\s*\'([^\']*)\'', raw)
+        if m:
+            return m.group(1).strip() or None
+        # JSON-LD: "publisher":{"@type":"NewsMediaOrganization","name":"BBC News Türkçe",...}
+        if "application/ld+json" in (script.get("type") or ""):
+            m = re.search(r'"name"\s*:\s*"(BBC\s+News\s+Türkçe|BBC\s+Türkçe)"', raw)
+            if m:
+                return m.group(1).strip() or None
+    return None
+
+
 def _parse_turkish_date_from_text(soup: BeautifulSoup) -> str | None:
     """Търси в страницата текст от вида 'Güncelleme 23 Mart 2025' и връща ISO дата (YYYY-MM-DDTHH:MM:SS+03:00)."""
     text = soup.get_text(" ", strip=True)
@@ -171,7 +192,7 @@ def _parse_metadata(soup: BeautifulSoup, base_url: str) -> dict:
         document_date = _parse_turkish_date_from_text(soup)
     if not document_date:
         document_date = "2026-02-11T00:00:00+03:00"  # 11 Şubat 2026
-    author_raw = _get_meta_content(soup, "article:author", "property") or _get_meta_content(soup, "author")
+    author_raw = _extract_bbc_author_from_page(soup) or _get_meta_content(soup, "article:author", "property") or _get_meta_content(soup, "author")
     author_url = None
     section = _get_meta_content(soup, "article:section", "property") or _get_meta_content(soup, "articleSection")
     categories = [{"name": section.strip(), "url": None}] if section else None

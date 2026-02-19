@@ -11,6 +11,8 @@ import sys
 import time
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 if hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -21,20 +23,6 @@ SITE_DIR = Path(__file__).resolve().parent
 ROOT = SITE_DIR.parent
 AI_FILES = SITE_DIR / "AI_files"
 HTML_FILES = SITE_DIR / "HTML_files"
-
-
-def load_env():
-    env_path = ROOT / ".env"
-    if not env_path.exists():
-        raise SystemExit("Missing .env in project root with ANTHROPIC_API_KEY=...")
-    for line in env_path.read_text(encoding="utf-8").strip().splitlines():
-        line = line.strip()
-        if line.startswith("#") or "=" not in line:
-            continue
-        key, _, value = line.partition("=")
-        key, value = key.strip(), value.strip().strip('"').strip("'")
-        if key and value:
-            os.environ[key] = value
 
 
 def extract_json_from_response(text: str) -> str:
@@ -115,10 +103,10 @@ def main():
         html_args = [str(p) for p in paths]
     else:
         html_args = sys.argv[1:]
-    load_env()
+    load_dotenv(ROOT / ".env")
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
-        raise SystemExit("ANTHROPIC_API_KEY missing in .env.")
+        raise SystemExit("ANTHROPIC_API_KEY missing in .env (create .env in project root with ANTHROPIC_API_KEY=...)")
     schema_path = ROOT / "scraped_article_json_schema.json"
     if not schema_path.exists():
         raise SystemExit(f"Schema not found: {schema_path}")
