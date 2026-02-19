@@ -2,6 +2,11 @@
 .env
 .env.local
 
+# Scraper output (do not track in Git)
+Parsed_files/
+HTML_files/
+AI_files/
+
 # Python
 __pycache__/
 *.py[cod]
