@@ -48,6 +48,26 @@ class BaseAiExtractor(ABC):
         """Override if schema path or content differs."""
         return (self.root / "scraped_article_json_schema.json").read_text(encoding="utf-8")
 
+    def get_base_url(self) -> str | None:
+        """Override to return site base URL (e.g. https://tr.euronews.com). Used to turn relative URLs into full links."""
+        return None
+
+    def _ensure_absolute_urls(self, data: dict) -> dict:
+        """If get_base_url() is set, replace any relative URL (starting with /) in metadata with full absolute URL."""
+        base = self.get_base_url()
+        if not base or not isinstance(data.get("metadata"), dict):
+            return data
+        base = base.rstrip("/")
+        meta = data["metadata"]
+        for key in ("authors", "categories", "tags"):
+            items = meta.get(key)
+            if not isinstance(items, list):
+                continue
+            for item in items:
+                if isinstance(item, dict) and isinstance(item.get("url"), str) and item["url"].strip().startswith("/"):
+                    item["url"] = base + item["url"]
+        return data
+
     def post_process_output(self, data: dict) -> dict:
         """Override to strip nulls or normalize; default returns data unchanged."""
         return data
@@ -105,6 +125,7 @@ class BaseAiExtractor(ABC):
             except json.JSONDecodeError as e:
                 print(f"Claude returned invalid JSON for {html_path.name}: {e}", file=sys.stderr)
                 continue
+            data = self._ensure_absolute_urls(data)
             data = self.post_process_output(data)
             out_file = self.ai_files / f"{html_path.stem}.json"
             with open(out_file, "w", encoding="utf-8") as f:

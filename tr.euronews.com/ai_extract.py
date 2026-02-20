@@ -41,9 +41,15 @@ Article HTML:
 """
 
 
+BASE_URL = "https://tr.euronews.com"
+
+
 class EuronewsAiExtractor(BaseAiExtractor):
     def __init__(self):
         super().__init__(site_dir=Path(__file__).resolve().parent)
+
+    def get_base_url(self) -> str:
+        return BASE_URL
 
     def build_prompt(self, html_content: str) -> str:
         return _build_euronews_prompt(html_content)

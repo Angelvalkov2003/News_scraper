@@ -31,6 +31,9 @@ class BbcAiExtractor(BaseAiExtractor):
     def __init__(self):
         super().__init__(site_dir=Path(__file__).resolve().parent)
 
+    def get_base_url(self) -> str:
+        return "https://www.bbc.com"
+
     def build_prompt(self, html_content: str) -> str:
         return _build_bbc_prompt(html_content)
 

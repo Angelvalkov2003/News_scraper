@@ -24,12 +24,19 @@ _USER_AGENT = (
 
 
 def _fetch_euronews_bytes(url: str) -> bytes:
-    """Fetch URL; ask for no compression so we get plain HTML bytes, then decode as UTF-8."""
-    req = Request(url, headers={"User-Agent": _USER_AGENT, "Accept-Encoding": "identity"})
+    """Fetch URL; decompress gzip or brotli if present, return plain HTML bytes."""
+    req = Request(url, headers={"User-Agent": _USER_AGENT})
     with urlopen(req, timeout=30) as resp:
         raw = resp.read()
-    if len(raw) >= 2 and raw[:2] == b"\x1f\x8b":
+        encoding = (resp.headers.get("Content-Encoding") or "").strip().lower()
+    if encoding == "gzip" or (len(raw) >= 2 and raw[:2] == b"\x1f\x8b"):
         raw = gzip.decompress(raw)
+    elif encoding == "br":
+        try:
+            import brotli
+            raw = brotli.decompress(raw)
+        except ImportError:
+            pass  # leave raw, decode may produce garbage; pip install brotli
     return raw
 
 

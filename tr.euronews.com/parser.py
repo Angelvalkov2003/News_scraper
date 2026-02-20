@@ -62,15 +62,22 @@ def _get_metadata(main: Tag, base_url: str) -> dict:
     authors = []
     contrib = main.find("div", class_=lambda c: c and "c-article-contributors" in (c if isinstance(c, str) else " ".join(c)))
     if contrib:
-        b = contrib.find("b")
-        if b and b.get_text(strip=True):
-            authors.append({"name": b.get_text(strip=True), "url": None})
+        author_link = contrib.find("a", href=True)
+        if author_link:
+            name = author_link.get_text(strip=True)
+            if name:
+                author_url = urljoin(base_url, author_link["href"])
+                authors.append({"name": name, "url": author_url})
         else:
-            text = contrib.get_text(strip=True)
-            if text:
-                name = re.sub(r"^By\s+", "", text, flags=re.I).strip()
-                if name:
-                    authors.append({"name": name, "url": None})
+            b = contrib.find("b")
+            if b and b.get_text(strip=True):
+                authors.append({"name": b.get_text(strip=True), "url": None})
+            else:
+                text = contrib.get_text(strip=True)
+                if text:
+                    name = re.sub(r"^By\s+", "", text, flags=re.I).strip()
+                    if name:
+                        authors.append({"name": name, "url": None})
 
     categories = None
     breadcrumbs = main.find("nav", class_=lambda c: c and "c-article-breadcrumbs" in (c if isinstance(c, str) else " ".join(c)))

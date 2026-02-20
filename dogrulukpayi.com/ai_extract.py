@@ -47,6 +47,9 @@ class DogrulukpayiAiExtractor(BaseAiExtractor):
     def __init__(self):
         super().__init__(site_dir=Path(__file__).resolve().parent)
 
+    def get_base_url(self) -> str:
+        return "https://www.dogrulukpayi.com"
+
     def build_prompt(self, html_content: str) -> str:
         if len(html_content) > MAX_HTML_CHARS:
             html_content = html_content[:MAX_HTML_CHARS] + "\n\n[... HTML truncated for API token limit ...]"
