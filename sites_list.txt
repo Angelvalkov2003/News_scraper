@@ -2,7 +2,7 @@ Link	Status
 https://www.birgun.net	            done
 https://www.turkiyegazetesi.com.tr	done
 https://www.bbc.com	                done
-https://tr.euronews.com	
+https://tr.euronews.com	            done
 https://www.nefes.com.tr	
 https://www.dogrulukpayi.com	    done
 https://www.kamudanhaber.net	
