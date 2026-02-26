@@ -1,6 +1,6 @@
 """
-Base AI extractor: send article HTML to Claude API, save JSON to AI_files/.
-Subclasses override build_prompt(); base handles env, schema, retries, and fallback.
+Base AI extractor: send article HTML to Claude (Anthropic) or OpenAI API, save JSON to AI_files/.
+Uses OPENAI_API_KEY if set, else ANTHROPIC_API_KEY. Subclasses override build_prompt().
 """
 
 import json
@@ -21,10 +21,13 @@ def _extract_json_from_response(text: str) -> str:
 
 
 class BaseAiExtractor(ABC):
-    """Template for AI extraction via Anthropic API."""
+    """Template for AI extraction via OpenAI or Anthropic API."""
 
+    # Anthropic
     DEFAULT_MODEL = "claude-sonnet-4-5"
     FALLBACK_MODEL = "claude-sonnet-4-20250514"
+    # OpenAI
+    OPENAI_MODEL = "gpt-4o-mini"
     MAX_RETRIES = 3
     RATE_LIMIT_WAIT = 65
 
@@ -79,21 +82,30 @@ class BaseAiExtractor(ABC):
         from dotenv import load_dotenv
 
         load_dotenv(self.root / ".env")
-        api_key = os.environ.get("ANTHROPIC_API_KEY")
-        if not api_key:
+        openai_key = os.environ.get("OPENAI_API_KEY", "").strip()
+        anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+        use_openai = bool(openai_key)
+        if not use_openai and not anthropic_key:
             raise SystemExit(
-                "ANTHROPIC_API_KEY missing in .env (create .env in project root with ANTHROPIC_API_KEY=...)"
+                "Set OPENAI_API_KEY or ANTHROPIC_API_KEY in .env (project root)."
             )
-        try:
-            import anthropic
-        except ImportError:
-            raise SystemExit("Install: pip install anthropic")
 
-        from ai_schema_for_claude import load_and_prepare_schema
-
-        schema = load_and_prepare_schema(self.root)
         schema_raw = self.get_schema_raw()
-        client = anthropic.Anthropic(api_key=api_key)
+        if use_openai:
+            try:
+                from openai import OpenAI
+            except ImportError:
+                raise SystemExit("Install: pip install openai")
+            client = OpenAI(api_key=openai_key)
+        else:
+            try:
+                import anthropic
+            except ImportError:
+                raise SystemExit("Install: pip install anthropic")
+            from ai_schema_for_claude import load_and_prepare_schema
+            schema = load_and_prepare_schema(self.root)
+            client = anthropic.Anthropic(api_key=anthropic_key)
+
         self.ai_files.mkdir(parents=True, exist_ok=True)
 
         if len(sys.argv) < 2:
@@ -117,13 +129,18 @@ class BaseAiExtractor(ABC):
             html_content = html_path.read_text(encoding="utf-8", errors="replace")
             prompt = self.build_prompt(html_content)
             prompt_with_schema = self._build_fallback_prompt(html_content, schema_raw)
-            text = self._call_api(client, anthropic, schema, prompt, prompt_with_schema, html_content)
+
+            if use_openai:
+                text = self._call_openai(client, prompt_with_schema)
+            else:
+                text = self._call_api(client, anthropic, schema, prompt, prompt_with_schema, html_content)
+
             if text is None:
                 continue
             try:
                 data = json.loads(text)
             except json.JSONDecodeError as e:
-                print(f"Claude returned invalid JSON for {html_path.name}: {e}", file=sys.stderr)
+                print(f"API returned invalid JSON for {html_path.name}: {e}", file=sys.stderr)
                 continue
             data = self._ensure_absolute_urls(data)
             data = self.post_process_output(data)
@@ -179,4 +196,28 @@ Article HTML:
                     raise SystemExit(1)
                 print(f"Rate limit (429). Waiting {self.RATE_LIMIT_WAIT} s...", file=sys.stderr)
                 time.sleep(self.RATE_LIMIT_WAIT)
+        return None
+
+    def _call_openai(self, client, prompt_with_schema: str) -> str | None:
+        """Call OpenAI Chat Completions with JSON mode; retry on rate limit."""
+        for attempt in range(self.MAX_RETRIES):
+            try:
+                resp = client.chat.completions.create(
+                    model=self.OPENAI_MODEL,
+                    max_tokens=8192,
+                    messages=[{"role": "user", "content": prompt_with_schema}],
+                    response_format={"type": "json_object"},
+                )
+                text = (resp.choices[0].message.content or "").strip()
+                return text if text else None
+            except Exception as e:
+                err_str = str(e).lower()
+                if "rate" in err_str or "429" in err_str:
+                    if attempt + 1 >= self.MAX_RETRIES:
+                        print("Error: OpenAI rate limit (429). Try again later.", file=sys.stderr)
+                        raise SystemExit(1)
+                    print(f"OpenAI rate limit. Waiting {self.RATE_LIMIT_WAIT} s...", file=sys.stderr)
+                    time.sleep(self.RATE_LIMIT_WAIT)
+                else:
+                    raise
         return None
