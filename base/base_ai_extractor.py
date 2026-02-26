@@ -76,7 +76,7 @@ class BaseAiExtractor(ABC):
         return data
 
     def main(self) -> None:
-        """CLI: python ai_extract.py <file.html> [file2.html ...]"""
+        """CLI: python ai_extract.py [--openai | --anthropic] <file.html> [file2.html ...]"""
         ensure_utf8_stdout()
         self._ensure_root_in_path()
         from dotenv import load_dotenv
@@ -84,11 +84,32 @@ class BaseAiExtractor(ABC):
         load_dotenv(self.root / ".env")
         openai_key = os.environ.get("OPENAI_API_KEY", "").strip()
         anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-        use_openai = bool(openai_key)
-        if not use_openai and not anthropic_key:
-            raise SystemExit(
-                "Set OPENAI_API_KEY or ANTHROPIC_API_KEY in .env (project root)."
-            )
+
+        # Parse --openai / --anthropic from argv (so run_article can pass them)
+        argv_rest = []
+        ai_backend = None
+        for i, arg in enumerate(sys.argv[1:], start=1):
+            if arg == "--openai":
+                ai_backend = "openai"
+            elif arg == "--anthropic":
+                ai_backend = "anthropic"
+            elif not arg.startswith("--"):
+                argv_rest.append(arg)
+
+        if ai_backend == "openai":
+            use_openai = True
+            if not openai_key:
+                raise SystemExit("OPENAI_API_KEY is required when using --openai. Set it in .env (project root).")
+        elif ai_backend == "anthropic":
+            use_openai = False
+            if not anthropic_key:
+                raise SystemExit("ANTHROPIC_API_KEY is required when using --anthropic. Set it in .env (project root).")
+        else:
+            use_openai = bool(openai_key)
+            if not use_openai and not anthropic_key:
+                raise SystemExit(
+                    "Set OPENAI_API_KEY or ANTHROPIC_API_KEY in .env (project root), or use --openai / --anthropic."
+                )
 
         schema_raw = self.get_schema_raw()
         if use_openai:
@@ -108,14 +129,14 @@ class BaseAiExtractor(ABC):
 
         self.ai_files.mkdir(parents=True, exist_ok=True)
 
-        if len(sys.argv) < 2:
+        if not argv_rest:
             paths = list(self.html_files.glob("*.html")) if self.html_files.exists() else []
             if not paths:
-                print("Usage: python ai_extract.py <file.html> [file2.html ...]", file=sys.stderr)
+                print("Usage: python ai_extract.py [--openai | --anthropic] <file.html> [file2.html ...]", file=sys.stderr)
                 sys.exit(1)
             html_args = [str(p) for p in paths]
         else:
-            html_args = sys.argv[1:]
+            html_args = argv_rest
 
         for html_arg in html_args:
             html_path = Path(html_arg).resolve()

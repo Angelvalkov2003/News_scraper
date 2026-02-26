@@ -37,7 +37,18 @@ class BaseRunner:
         parser.add_argument(
             "--ai", "-a",
             action="store_true",
-            help="After fetch: generate JSON via Anthropic API (AI_files/)",
+            help="After fetch: generate JSON via AI (AI_files/). Use --openai or --anthropic to choose provider.",
+        )
+        ai_group = parser.add_mutually_exclusive_group()
+        ai_group.add_argument(
+            "--openai",
+            action="store_true",
+            help="Use OpenAI for --ai (requires OPENAI_API_KEY in .env)",
+        )
+        ai_group.add_argument(
+            "--anthropic",
+            action="store_true",
+            help="Use Anthropic (Claude) for --ai (requires ANTHROPIC_API_KEY in .env)",
         )
         args = parser.parse_args()
 
@@ -79,9 +90,16 @@ class BaseRunner:
 
         # 3. AI extract (if requested)
         if args.ai:
-            print("Generating JSON via Anthropic API (AI_files/)...")
+            ai_cmd = [sys.executable, str(self.site_dir / "ai_extract.py")]
+            if args.openai:
+                ai_cmd.append("--openai")
+            elif args.anthropic:
+                ai_cmd.append("--anthropic")
+            ai_cmd.append(str(html_path))
+            provider = "OpenAI" if args.openai else ("Anthropic" if args.anthropic else "AI (auto)")
+            print(f"Generating JSON via {provider} (AI_files/)...")
             ret = subprocess.run(
-                [sys.executable, str(self.site_dir / "ai_extract.py"), str(html_path)],
+                ai_cmd,
                 cwd=str(self.site_dir),
                 capture_output=False,
             )
@@ -94,7 +112,7 @@ class BaseRunner:
 
     def get_description(self) -> str:
         """Override for site-specific description."""
-        return "Fetch article by URL; with --parse run parser to JSON, with --ai generate JSON via Anthropic API."
+        return "Fetch article by URL; with --parse run parser to JSON, with --ai generate JSON via AI (use --openai or --anthropic to choose provider)."
 
     def get_url_help(self) -> str:
         """Override for site-specific URL help."""
