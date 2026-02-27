@@ -55,6 +55,18 @@ class BaseAiExtractor(ABC):
         """Override to return site base URL (e.g. https://tr.euronews.com). Used to turn relative URLs into full links."""
         return None
 
+    def get_component_instructions(self) -> str:
+        """Instructions for video and table components (scraped_article_json_schema style). Injected into prompts so AI always emits them when present."""
+        return """When you find VIDEO or TABLE in the HTML, emit them as components in this exact form:
+
+Video: For any embedded video (YouTube, Vimeo, iframe, data-video-id, or thumbnail URL like i.ytimg.com/vi_webp/VIDEO_ID/) add:
+  {"type": "video", "properties": {"url": "<watch URL>", "thumbnail_image_url": "<optional>", "name": "<optional>", "caption": "<optional>", "description": "<optional>"}}
+  Required: url. Optional: name, caption, description, thumbnail_image_url. Place the component where the video appears in the document.
+
+Table: For any <table> add:
+  {"type": "table", "properties": {"headers": ["col1", "col2", ...], "rows": [["a", "b"], ["c", "d"], ...], "caption": "<optional>"}}
+  Required: headers (array of strings), rows (array of arrays of cell strings). Optional: caption. Preserve cell text; use markdown in cells if needed."""
+
     def _ensure_absolute_urls(self, data: dict) -> dict:
         """If get_base_url() is set, replace any relative URL (starting with /) in metadata with full absolute URL."""
         base = self.get_base_url()
@@ -172,7 +184,10 @@ class BaseAiExtractor(ABC):
 
     def _build_fallback_prompt(self, html_content: str, schema_raw: str) -> str:
         """Prompt used when structured output fails (schema in body). Override if needed."""
+        comp = self.get_component_instructions()
         return f"""Extract this article HTML. Return ONE valid JSON conforming to the schema below. Return ONLY JSON.
+
+{comp}
 
 JSON Schema:
 {schema_raw}
@@ -190,12 +205,14 @@ Article HTML:
         html_content: str,
     ) -> str | None:
         """Try structured output; on BadRequest (format/grammar) fall back to prompt+parse."""
+        base_components = self.get_component_instructions()
+        full_prompt = prompt.rstrip() + "\n\n" + base_components
         for attempt in range(self.MAX_RETRIES):
             try:
                 message = client.messages.create(
                     model=self.DEFAULT_MODEL,
                     max_tokens=8192,
-                    messages=[{"role": "user", "content": prompt}],
+                    messages=[{"role": "user", "content": full_prompt}],
                     output_config={"format": {"type": "json_schema", "schema": schema}},
                 )
                 text = (message.content[0].text if message.content else "").strip()
