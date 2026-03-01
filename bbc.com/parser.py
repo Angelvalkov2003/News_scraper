@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from base._video_schema import extract_video_from_iframe, make_video_component
 from base.base_parser import BaseParser
 
 BASE_URL = "https://www.bbc.com"
@@ -225,7 +226,7 @@ def _parse_components(soup: BeautifulSoup, base_url: str) -> list[dict]:
     if not content:
         return []
     components = []
-    for tag in content.find_all(["h1", "h2", "h3", "h4", "h5", "h6", "p", "img", "blockquote", "ul", "ol", "table", "hr"]):
+    for tag in content.find_all(["h1", "h2", "h3", "h4", "h5", "h6", "p", "img", "iframe", "blockquote", "ul", "ol", "table", "hr"]):
         if tag.find_parent(["li", "td", "th", "blockquote"]):
             continue
         if _is_inside_skip_block(tag):
@@ -240,6 +241,10 @@ def _parse_components(soup: BeautifulSoup, base_url: str) -> list[dict]:
                 if re.match(r"^Kaynak\s*,", text.strip(), re.I):
                     continue
                 components.append({"type": "paragraph", "properties": {"text": text}})
+        elif tag.name == "iframe":
+            video_url, thumb = extract_video_from_iframe(tag, base_url)
+            if video_url:
+                components.append(make_video_component(video_url, thumbnail_image_url=thumb))
         elif tag.name == "img":
             src = tag.get("src") or ""
             if re.search(r"(icon|logo|placeholder|spacer|pixel|avatar|share|social)", src, re.I):

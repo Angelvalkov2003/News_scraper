@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from base._video_schema import extract_video_from_iframe, make_video_component
 from base.base_parser import BaseParser
 
 BASE_URL = "https://ajansspor.com"
@@ -215,9 +216,22 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
                         components_list.append({"type": "heading", "properties": {"text": text, "level": 2}})
                 elif child.name == "article":
                     for p in child.find_all("p"):
+                        iframe = p.find("iframe", src=True)
+                        if iframe:
+                            video_url, thumb = extract_video_from_iframe(iframe, base_url)
+                            if video_url:
+                                components_list.append(make_video_component(video_url, thumbnail_image_url=thumb))
+                                text = "".join(_inline_to_markdown(c) for c in p.children if c is not iframe).strip()
+                                if text:
+                                    components_list.append({"type": "paragraph", "properties": {"text": text}})
+                                continue
                         text = _inline_to_markdown(p).strip()
                         if text:
                             components_list.append({"type": "paragraph", "properties": {"text": text}})
+                elif child.name == "iframe":
+                    video_url, thumb = extract_video_from_iframe(child, base_url)
+                    if video_url:
+                        components_list.append(make_video_component(video_url, thumbnail_image_url=thumb))
 
     return {
         "metadata": metadata,

@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from base._video_schema import extract_video_from_iframe, make_video_component
 from base.base_parser import BaseParser
 
 BASE_URL = "https://www.forbes.com.tr"
@@ -141,7 +142,7 @@ def _lead_media_components(article: Tag) -> list:
     return out
 
 
-def _components_from_yazialani(content: Tag) -> list:
+def _components_from_yazialani(content: Tag, base_url: str) -> list:
     components = []
     if not content:
         return components
@@ -151,9 +152,23 @@ def _components_from_yazialani(content: Tag) -> list:
         if _has_class(child, "article_masthead_ad", "makale_paylas"):
             continue
         if child.name == "p":
+            iframe = child.find("iframe", src=True)
+            if iframe:
+                video_url, thumb = extract_video_from_iframe(iframe, base_url)
+                if video_url:
+                    components.append(make_video_component(video_url, thumbnail_image_url=thumb))
+                    text = "".join(_inline_to_markdown(c) for c in child.children if c is not iframe).strip()
+                    if text:
+                        components.append({"type": "paragraph", "properties": {"text": text}})
+                    continue
             text = _inline_to_markdown(child).strip()
             if text:
                 components.append({"type": "paragraph", "properties": {"text": text}})
+            continue
+        if child.name == "iframe":
+            video_url, thumb = extract_video_from_iframe(child, base_url)
+            if video_url:
+                components.append(make_video_component(video_url, thumbnail_image_url=thumb))
             continue
         if child.name in ("h1", "h2", "h3", "h4", "h5", "h6"):
             text = child.get_text(strip=True)
@@ -205,7 +220,7 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
             components_list.append({"type": "heading", "properties": {"text": spot.get_text(strip=True), "level": 2}})
         components_list.extend(_lead_media_components(article))
         yazialani = article.find("div", class_=lambda c: c and "makaledetay_yazialani" in (c if isinstance(c, str) else " ".join(c)))
-        components_list.extend(_components_from_yazialani(yazialani))
+        components_list.extend(_components_from_yazialani(yazialani, base_url))
 
     return {
         "metadata": metadata,

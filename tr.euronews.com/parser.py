@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from base._video_schema import extract_video_from_iframe, make_video_component
 from base.base_parser import BaseParser
 
 BASE_URL = "https://tr.euronews.com"
@@ -146,7 +147,7 @@ def _figcaption_text(figcap: Tag) -> str:
     return figcap.get_text(strip=True) or ""
 
 
-def _components_from_article_content(content_div: Tag) -> list:
+def _components_from_article_content(content_div: Tag, base_url: str) -> list:
     components = []
     if not content_div:
         return components
@@ -157,9 +158,23 @@ def _components_from_article_content(content_div: Tag) -> list:
         if _has_class(child, "c-ad", "connatix-container"):
             continue
         if child.name == "p":
+            iframe = child.find("iframe", src=True)
+            if iframe:
+                video_url, thumb = extract_video_from_iframe(iframe, base_url)
+                if video_url:
+                    components.append(make_video_component(video_url, thumbnail_image_url=thumb))
+                    text = "".join(_inline_to_markdown(c) for c in child.children if c is not iframe).strip()
+                    if text:
+                        components.append({"type": "paragraph", "properties": {"text": text}})
+                    continue
             text = _inline_to_markdown(child).strip()
             if text:
                 components.append({"type": "paragraph", "properties": {"text": text}})
+            continue
+        if child.name == "iframe":
+            video_url, thumb = extract_video_from_iframe(child, base_url)
+            if video_url:
+                components.append(make_video_component(video_url, thumbnail_image_url=thumb))
             continue
         if child.name in ("h1", "h2", "h3", "h4", "h5", "h6"):
             text = child.get_text(strip=True)
@@ -209,7 +224,7 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
         components_list.append({"type": "heading", "properties": {"text": summary.get_text(strip=True), "level": 2}})
 
     content = main.find("div", class_=lambda c: c and "c-article-content" in (c if isinstance(c, str) else " ".join(c)) and "js-article-content" in (c if isinstance(c, str) else " ".join(c)))
-    components_list.extend(_components_from_article_content(content))
+    components_list.extend(_components_from_article_content(content, base_url))
 
     return {
         "metadata": metadata,

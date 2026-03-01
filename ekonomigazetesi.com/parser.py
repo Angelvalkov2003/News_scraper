@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from base._video_schema import extract_video_from_iframe, make_video_component
 from base.base_parser import BaseParser
 
 BASE_URL = "https://www.ekonomigazetesi.com"
@@ -133,6 +134,16 @@ def _components_from_entry_content(container: Tag, base_url: str) -> tuple[list,
         if _has_class(child, "ruby-table-contents", "rbtoc", "entry-bottom", "e-shared-sec", "sticky-share-list-buffer"):
             continue
         if child.name == "p":
+            iframe = child.find("iframe", src=True)
+            if iframe:
+                video_url, thumb = extract_video_from_iframe(iframe, base_url)
+                if video_url:
+                    components.append(make_video_component(video_url, thumbnail_image_url=thumb))
+                    text = "".join(_inline_to_markdown(c) for c in child.children if c is not iframe).strip()
+                    if text:
+                        components.append({"type": "paragraph", "properties": {"text": text}})
+                    first_p_checked = True
+                    continue
             text = _inline_to_markdown(child).strip()
             if text:
                 if not first_p_checked and _looks_like_byline_paragraph(child):
@@ -141,6 +152,11 @@ def _components_from_entry_content(container: Tag, base_url: str) -> tuple[list,
                     continue
                 first_p_checked = True
                 components.append({"type": "paragraph", "properties": {"text": text}})
+            continue
+        if child.name == "iframe":
+            video_url, thumb = extract_video_from_iframe(child, base_url)
+            if video_url:
+                components.append(make_video_component(video_url, thumbnail_image_url=thumb))
             continue
         if child.name in ("h1", "h2", "h3", "h4", "h5", "h6"):
             text = child.get_text(strip=True)

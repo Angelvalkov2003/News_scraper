@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from base._video_schema import extract_video_from_iframe, make_video_component
 from base.base_parser import BaseParser
 
 BASE_URL = "https://www.goal.com"
@@ -112,12 +113,28 @@ def _components_from_body(container: Tag, base_url: str) -> list:
     for child in content.children:
         if not isinstance(child, Tag):
             continue
-        # Skip known non-content
+        # Video player: try to extract embed URL
         if child.get("class"):
             cls = " ".join(child.get("class", []))
-            if "fco-fc-video-player" in cls or "fco-match-recirculation" in cls or "open-web-ad" in cls or "ad-slot" in cls:
+            if "fco-fc-video-player" in cls:
+                iframe = child.find("iframe", src=True)
+                if iframe:
+                    video_url, thumb = extract_video_from_iframe(iframe, base_url)
+                    if video_url:
+                        components.append(make_video_component(video_url, thumbnail_image_url=thumb))
+                continue
+            if "fco-match-recirculation" in cls or "open-web-ad" in cls or "ad-slot" in cls:
                 continue
         if child.name == "p":
+            iframe = child.find("iframe", src=True)
+            if iframe:
+                video_url, thumb = extract_video_from_iframe(iframe, base_url)
+                if video_url:
+                    components.append(make_video_component(video_url, thumbnail_image_url=thumb))
+                    text = "".join(_inline_to_markdown(c) for c in child.children if c is not iframe).strip()
+                    if text:
+                        components.append({"type": "paragraph", "properties": {"text": text}})
+                    continue
             text = _inline_to_markdown(child).strip()
             if text:
                 components.append({"type": "paragraph", "properties": {"text": text}})
@@ -127,7 +144,16 @@ def _components_from_body(container: Tag, base_url: str) -> list:
                 level = int(child.name[1])
                 components.append({"type": "heading", "properties": {"text": text, "level": level}})
         elif child.name == "span" and "fco-fc-video-player" in (child.get("class") or []):
+            iframe = child.find("iframe", src=True)
+            if iframe:
+                video_url, thumb = extract_video_from_iframe(iframe, base_url)
+                if video_url:
+                    components.append(make_video_component(video_url, thumbnail_image_url=thumb))
             continue
+        elif child.name == "iframe":
+            video_url, thumb = extract_video_from_iframe(child, base_url)
+            if video_url:
+                components.append(make_video_component(video_url, thumbnail_image_url=thumb))
         elif child.find("img", src=True):
             img = child.find("img", src=True)
             if img:

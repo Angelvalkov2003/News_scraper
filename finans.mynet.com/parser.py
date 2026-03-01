@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from base._video_schema import extract_video_from_iframe, make_video_component
 from base.base_parser import BaseParser
 
 BASE_URL = "https://finans.mynet.com"
@@ -124,7 +125,7 @@ def _get_metadata(soup: BeautifulSoup, base_url: str) -> dict:
     }
 
 
-def _components_from_detail_content(container: Tag) -> list:
+def _components_from_detail_content(container: Tag, base_url: str) -> list:
     components = []
     if not container:
         return components
@@ -142,6 +143,23 @@ def _components_from_detail_content(container: Tag) -> list:
         if child.name == "script" or child.name == "style":
             continue
         if child.name == "p":
+            iframe = child.find("iframe", src=True)
+            if iframe:
+                video_url, thumb = extract_video_from_iframe(iframe, base_url)
+                if video_url:
+                    components.append(make_video_component(video_url, thumbnail_image_url=thumb))
+                    for img in child.find_all("img"):
+                        url = (img.get("data-original") or img.get("src") or "").strip()
+                        if url:
+                            props = {"url": url}
+                            alt = (img.get("alt") or "").strip()
+                            if alt:
+                                props["description"] = alt
+                            components.append({"type": "image", "properties": props})
+                    text = "".join(_inline_to_markdown(c) for c in child.children if c is not iframe).strip()
+                    if text:
+                        components.append({"type": "paragraph", "properties": {"text": text}})
+                    continue
             for img in child.find_all("img"):
                 url = (img.get("data-original") or img.get("src") or "").strip()
                 if url:
@@ -153,6 +171,11 @@ def _components_from_detail_content(container: Tag) -> list:
             text = _inline_to_markdown(child).strip()
             if text:
                 components.append({"type": "paragraph", "properties": {"text": text}})
+            continue
+        if child.name == "iframe":
+            video_url, thumb = extract_video_from_iframe(child, base_url)
+            if video_url:
+                components.append(make_video_component(video_url, thumbnail_image_url=thumb))
             continue
         if child.name in ("h1", "h2", "h3", "h4", "h5", "h6"):
             text = child.get_text(strip=True)
@@ -236,7 +259,7 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
             detail_inner = content_box.find("div", id="contextual")
         if not detail_inner:
             detail_inner = content_box
-        components_list.extend(_components_from_detail_content(detail_inner))
+        components_list.extend(_components_from_detail_content(detail_inner, base_url))
 
     return {
         "metadata": metadata,

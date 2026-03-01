@@ -60,8 +60,8 @@ class BaseAiExtractor(ABC):
         return """When you find VIDEO or TABLE in the HTML, emit them as components in this exact form:
 
 Video: For any embedded video (YouTube, Vimeo, iframe, data-video-id, or thumbnail URL like i.ytimg.com/vi_webp/VIDEO_ID/) add:
-  {"type": "video", "properties": {"url": "<watch URL>", "thumbnail_image_url": "<optional>", "name": "<optional>", "caption": "<optional>", "description": "<optional>"}}
-  Required: url. Optional: name, caption, description, thumbnail_image_url. Place the component where the video appears in the document.
+  {"type": "video", "properties": {"url": "<watch or embed URL>", "thumbnail_image_url": "<optional>", "name": "<optional>", "caption": "<optional>", "description": "<optional>"}}
+  Required: url. Fill optional fields when available: name (title/link text), caption (text below video), description (alt/accessibility), thumbnail_image_url (for YouTube use https://i.ytimg.com/vi_webp/VIDEO_ID/maxresdefault.webp). Place the component where the video appears in the document.
 
 Table: For any <table> add:
   {"type": "table", "properties": {"headers": ["col1", "col2", ...], "rows": [["a", "b"], ["c", "d"], ...], "caption": "<optional>"}}

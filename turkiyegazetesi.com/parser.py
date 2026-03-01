@@ -133,6 +133,11 @@ def _lead_media_components(article: Tag) -> list:
             poster = (video.get("poster") or "").strip()
             if poster:
                 props["thumbnail_image_url"] = poster
+            figcap = first_media.find("figcaption")
+            if figcap:
+                cap = _figcaption_text(figcap)
+                if cap:
+                    props["caption"] = cap
             out.append({"type": "video", "properties": props})
         return out
     img = first_media.find("img", src=True)

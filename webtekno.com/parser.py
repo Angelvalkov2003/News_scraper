@@ -42,15 +42,19 @@ def _youtube_video_id_from_tag(tag: Tag) -> str | None:
     return None
 
 
-def _video_component(video_id: str) -> dict:
-    """Build schema video component for YouTube (url required; optional thumbnail)."""
-    return {
-        "type": "video",
-        "properties": {
-            "url": f"https://www.youtube.com/watch?v={video_id}",
-            "thumbnail_image_url": YOUTUBE_THUMB.format(id=video_id),
-        },
+def _video_component(video_id: str, *, name: str | None = None, caption: str | None = None, description: str | None = None) -> dict:
+    """Build schema video component for YouTube (url required; optional name, caption, description, thumbnail)."""
+    props = {
+        "url": f"https://www.youtube.com/watch?v={video_id}",
+        "thumbnail_image_url": YOUTUBE_THUMB.format(id=video_id),
     }
+    if name:
+        props["name"] = name
+    if caption:
+        props["caption"] = caption
+    if description:
+        props["description"] = description
+    return {"type": "video", "properties": props}
 
 
 def _inline_to_markdown(tag) -> str:
