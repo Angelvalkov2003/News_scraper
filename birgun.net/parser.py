@@ -223,9 +223,13 @@ def _parse_components(soup: BeautifulSoup, base_url: str) -> list[dict]:
 def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     html_str = _decode_html(html_raw)
     soup = BeautifulSoup(html_str, "html.parser")
+    metadata = _parse_metadata(soup, base_url)
+    components = _parse_components(soup, base_url)
+    if metadata.get("title"):
+        components.insert(0, {"type": "heading", "properties": {"text": metadata["title"], "level": 1}})
     return {
-        "metadata": _parse_metadata(soup, base_url),
-        "components": {"components": _parse_components(soup, base_url)},
+        "metadata": metadata,
+        "components": {"components": components},
     }
 
 

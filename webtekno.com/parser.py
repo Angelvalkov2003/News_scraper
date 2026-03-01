@@ -204,6 +204,8 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     metadata = _get_metadata(soup, base_url)
 
     components_list = []
+    if metadata.get("title"):
+        components_list.append({"type": "heading", "properties": {"text": metadata["title"], "level": 1}})
     detail = soup.find("div", class_=lambda c: c and "detail-content" in (c if isinstance(c, str) else " ".join(c)))
     if not detail:
         return {"metadata": metadata, "components": {"components": components_list}}

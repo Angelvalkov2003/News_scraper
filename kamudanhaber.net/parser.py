@@ -195,6 +195,8 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     metadata = _get_metadata(root, base_url)
 
     components_list = []
+    if metadata.get("title"):
+        components_list.append({"type": "heading", "properties": {"text": metadata["title"], "level": 1}})
     components_list.extend(_lead_media_components(root))
 
     header = root.find("div", class_=lambda c: c and "post-header" in (c if isinstance(c, str) else " ".join(c)))

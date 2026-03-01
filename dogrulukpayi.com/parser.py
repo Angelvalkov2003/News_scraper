@@ -592,6 +592,8 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
             if meta_next.get("authors") and not metadata.get("authors"):
                 metadata["authors"] = meta_next["authors"]
     components_list = []
+    if metadata.get("title"):
+        components_list.append({"type": "heading", "properties": {"text": metadata["title"], "level": 1}})
 
     if content_root:
         components_list.extend(_lead_media_components(content_root))

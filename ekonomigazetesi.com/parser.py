@@ -187,6 +187,8 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     metadata = _get_metadata(soup, base_url)
 
     components_list = []
+    if metadata.get("title"):
+        components_list.append({"type": "heading", "properties": {"text": metadata["title"], "level": 1}})
 
     # 1) Tagline (h3.s-tagline) first – above the image
     tagline = soup.find("h3", class_=lambda c: c and "s-tagline" in (c if isinstance(c, str) else " ".join(c)))

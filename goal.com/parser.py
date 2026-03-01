@@ -148,6 +148,8 @@ def parse_article_html(html_raw: bytes, base_url: str = BASE_URL) -> dict:
     metadata = _get_metadata(soup, base_url)
 
     components_list = []
+    if metadata.get("title"):
+        components_list.append({"type": "heading", "properties": {"text": metadata["title"], "level": 1}})
     article_el = soup.find("article") or soup
 
     # Lead image from poster
