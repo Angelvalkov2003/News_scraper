@@ -1,0 +1,4 @@
+# Optional for automatic fetch (get past consent page).
+# From project root or this folder: pip install -r business.google.com/requirements.txt
+# Then: playwright install chromium
+playwright>=1.40.0
